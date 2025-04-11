@@ -43,7 +43,7 @@ public class MainControllerTest {
         testInfluencers.add(new Influencer("Sophia Chen", "Instagram", "Fashion", 800000, "China", 1800.0));
         testInfluencers.add(new Influencer("Michael Brown", "YouTube", "Gaming", 3000000, "USA", 7000.0));
         
-        // 使用反射设置currentWorkingSet
+
         try {
             java.lang.reflect.Field field = MainController.class.getDeclaredField("currentWorkingSet");
             field.setAccessible(true);
@@ -52,10 +52,10 @@ public class MainControllerTest {
             fail("Failed to set up test: " + e.getMessage());
         }
         
-        // 使用反射设置currentUser
+
         try {
             User testUser = new User("testUser", "password");
-            testUser.subscribe(); // 确保用户有订阅，可以进行所有操作
+            testUser.subscribe();
             
             java.lang.reflect.Field field = MainController.class.getDeclaredField("currentUser");
             field.setAccessible(true);
@@ -67,7 +67,7 @@ public class MainControllerTest {
     
     @Test
     public void testResetWorkingSet() {
-        // 设置一个模拟的repository
+
         InfluencerRepository mockRepo = mock(InfluencerRepository.class);
         when(mockRepo.findAll()).thenReturn(testInfluencers);
         
@@ -79,13 +79,13 @@ public class MainControllerTest {
             fail("Failed to set up test: " + e.getMessage());
         }
         
-        // 调用resetWorkingSet方法
+
         controller.resetWorkingSet();
         
-        // 验证view.displayInfluencers被调用
+
         verify(mockView).displayInfluencers(testInfluencers);
         
-        // 验证currentWorkingSet被重置
+
         try {
             java.lang.reflect.Field field = MainController.class.getDeclaredField("currentWorkingSet");
             field.setAccessible(true);
@@ -102,10 +102,10 @@ public class MainControllerTest {
     
     @Test
     public void testContinuousSearching() {
-        // 首先搜索名字包含"John"的influencer
+
         controller.handleInfluencerSearch("John");
         
-        // 捕获传递给view的结果
+
         ArgumentCaptor<List<Influencer>> captor = ArgumentCaptor.forClass(List.class);
         verify(mockView).displaySearchResults(captor.capture());
         
@@ -113,7 +113,7 @@ public class MainControllerTest {
         assertEquals(2, firstResults.size());
         assertEquals("John Smith", firstResults.get(0).getName());
         
-        // 确认currentWorkingSet更新为第一次搜索的结果
+
         try {
             java.lang.reflect.Field field = MainController.class.getDeclaredField("currentWorkingSet");
             field.setAccessible(true);
@@ -128,26 +128,26 @@ public class MainControllerTest {
     
     @Test
     public void testContinuousFiltering() {
-        // 创建过滤条件：平台为"Instagram"
+
         Map<String, Object> filterParams = new HashMap<>();
         filterParams.put("platform", "Instagram");
         
-        // 应用过滤
+
         controller.handleInfluencerFilter(filterParams);
         
-        // 捕获传递给view的结果
+
         ArgumentCaptor<List<Influencer>> captor = ArgumentCaptor.forClass(List.class);
         verify(mockView).displayInfluencers(captor.capture());
         
         List<Influencer> filteredResults = captor.getValue();
         assertEquals(2, filteredResults.size());
         
-        // 验证过滤结果都是Instagram平台的
+
         for (Influencer inf : filteredResults) {
             assertEquals("Instagram", inf.getPlatform());
         }
         
-        // 确认currentWorkingSet更新为过滤结果
+
         try {
             java.lang.reflect.Field field = MainController.class.getDeclaredField("currentWorkingSet");
             field.setAccessible(true);
@@ -161,16 +161,16 @@ public class MainControllerTest {
             fail("Failed to verify test: " + e.getMessage());
         }
         
-        // 重置mock以继续测试
+
         reset(mockView);
         
-        // 在Instagram结果上继续过滤：国家为"USA"
+
         filterParams.clear();
         filterParams.put("country", "USA");
         
         controller.handleInfluencerFilter(filterParams);
         
-        // 再次捕获结果
+
         verify(mockView).displayInfluencers(captor.capture());
         
         List<Influencer> secondFilterResults = captor.getValue();
@@ -182,10 +182,10 @@ public class MainControllerTest {
     
     @Test
     public void testContinuousSorting() {
-        // 首先按名称排序
+
         controller.handleInfluencerSort("name", true);
         
-        // 捕获传递给view的结果
+
         ArgumentCaptor<List<Influencer>> captor = ArgumentCaptor.forClass(List.class);
         verify(mockView).displayInfluencers(captor.capture());
         
@@ -194,21 +194,21 @@ public class MainControllerTest {
         assertEquals("David Lee", sortedByName.get(0).getName());
         assertEquals("Emma Johnson", sortedByName.get(1).getName());
         
-        // 重置mock以继续测试
+
         reset(mockView);
         
-        // 在排序结果的基础上进行过滤：国家为"USA"
+
         Map<String, Object> filterParams = new HashMap<>();
         filterParams.put("country", "USA");
         
         controller.handleInfluencerFilter(filterParams);
         
-        // 再次捕获结果
+
         verify(mockView).displayInfluencers(captor.capture());
         
         List<Influencer> filteredResults = captor.getValue();
         assertEquals(2, filteredResults.size());
-        // 验证结果都来自USA
+
         for (Influencer inf : filteredResults) {
             assertEquals("USA", inf.getCountry());
         }
@@ -216,7 +216,7 @@ public class MainControllerTest {
     
     @Test
     public void testImportUpdatesWorkingSet() {
-        // 创建模拟的导入器和导入数据
+
         IImporter mockImporter = mock(IImporter.class);
         List<Influencer> importedData = new ArrayList<>();
         importedData.add(new Influencer("John Smith", "Instagram", "Fitness", 500000, "USA", 2500.0));
@@ -232,7 +232,7 @@ public class MainControllerTest {
             field.setAccessible(true);
             field.set(controller, mockImporter);
             
-            // 设置一个模拟的repository
+
             InfluencerRepository mockRepo = mock(InfluencerRepository.class);
             field = MainController.class.getDeclaredField("repository");
             field.setAccessible(true);
@@ -241,10 +241,10 @@ public class MainControllerTest {
             fail("Failed to set up test: " + e.getMessage());
         }
         
-        // 调用handleImport
+
         controller.handleImport("csv", "test.csv");
         
-        // 验证currentWorkingSet被更新为导入的数据
+
         try {
             java.lang.reflect.Field field = MainController.class.getDeclaredField("currentWorkingSet");
             field.setAccessible(true);
