@@ -1,0 +1,406 @@
+Name,Platform,Category,FollowerCount,Country,AdRate
+John Smith,Instagram,Fitness,500000,USA,2500.0
+Emma Johnson,YouTube,Beauty,2000000,UK,5000.0
+David Lee,TikTok,Comedy,1500000,Canada,3000.0
+Sophia Chen,Instagram,Fashion,800000,China,1800.0
+Michael Brown,YouTube,Gaming,3000000,USA,7000.0
+Olivia Garcia,TikTok,Dance,1200000,Spain,2200.0
+William Kim,Instagram,Travel,600000,South Korea,1500.0
+Emily Martinez,YouTube,Cooking,900000,Mexico,2000.0
+James Wilson,Twitch,Gaming,400000,Australia,1200.0
+Ava Taylor,Instagram,Lifestyle,700000,USA,1800.0
+Robert Chen,TikTok,Education,1800000,Singapore,4500.0
+Maria Lopez,YouTube,Makeup,2500000,Brazil,6000.0
+Alex Wong,Instagram,Technology,1300000,Hong Kong,3200.0
+Sofia Rodriguez,TikTok,Music,2200000,Argentina,4800.0
+Thomas Mueller,YouTube,Sports,1700000,Germany,3800.0
+Liam Johnson,Twitch,Gaming,2800000,Canada,6500.0
+Chloe Baker,Instagram,Art,550000,France,1600.0
+Daniel Kim,TikTok,Comedy,950000,South Korea,2300.0
+Isabella Rossi,YouTube,DIY,1100000,Italy,2700.0
+Ethan Carter,Instagram,Photography,750000,Australia,1900.0
+Mia Zhang,TikTok,Fashion,1450000,China,3500.0
+Noah Phillips,YouTube,Science,1250000,UK,3200.0
+Olivia Wilson,Instagram,Travel,880000,New Zealand,2100.0
+Lucas Garcia,Twitch,Gaming,1900000,Mexico,4200.0
+Victoria Wang,TikTok,Dance,1350000,Taiwan,3100.0
+Samuel Park,Instagram,Food,670000,South Korea,1750.0
+Zoe Brown,YouTube,Lifestyle,2300000,USA,5500.0
+Ryan Chen,TikTok,Education,1150000,China,2800.0
+Grace Wilson,Instagram,Beauty,920000,Canada,2300.0
+Benjamin Lopez,YouTube,Comedy,1850000,Spain,4200.0
+Natalie Kim,TikTok,Music,1550000,Japan,3600.0
+Christopher Torres,Instagram,Fitness,780000,Mexico,2000.0
+Amelia Clark,YouTube,Fashion,2700000,UK,6300.0
+Matthew Nguyen,Twitch,Gaming,1050000,Vietnam,2500.0
+Lily Wang,Instagram,Travel,830000,Singapore,2100.0
+Andrew Smith,TikTok,Comedy,1750000,USA,4000.0
+Hannah Chen,YouTube,Cooking,1680000,Taiwan,3900.0
+Jack Martinez,Instagram,Technology,720000,Spain,1850.0
+Abigail Kim,TikTok,Dance,1300000,South Korea,3000.0
+Elijah Johnson,YouTube,Education,2100000,UK,5200.0
+Charlotte Davis,Instagram,Art,550000,France,1650.0
+Gabriel Rodriguez,TikTok,Sports,1900000,Brazil,4300.0
+Madison Wright,YouTube,Beauty,2550000,Canada,6000.0
+Isaac Lee,Twitch,Gaming,3200000,USA,7500.0
+Aria Patel,Instagram,Fashion,780000,India,1900.0
+Henry Wilson,TikTok,Comedy,1050000,Australia,2600.0
+Zara Thompson,YouTube,DIY,1350000,New Zealand,3300.0
+Leo Garcia,Instagram,Photography,690000,Mexico,1800.0
+Scarlett Chen,TikTok,Food,1550000,China,3700.0
+Miles Taylor,YouTube,Science,2050000,UK,5000.0
+Audrey Kim,Instagram,Travel,870000,Japan,2200.0
+Owen Martin,TikTok,Music,1150000,Ireland,2800.0
+Penelope Brown,YouTube,Gaming,2900000,USA,6700.0
+Maxwell Chen,Instagram,Fitness,710000,Hong Kong,1850.0
+Stella Wong,TikTok,Dance,1400000,Singapore,3300.0
+Caleb Johnson,YouTube,Comedy,1950000,Canada,4500.0
+Nora Rodriguez,Instagram,Beauty,850000,Spain,2100.0
+Julian Smith,TikTok,Education,1750000,UK,4100.0
+Maya Lewis,YouTube,Fashion,2300000,USA,5400.0
+Felix Garcia,Twitch,Gaming,1100000,Mexico,2700.0
+Hazel Chen,Instagram,Art,590000,China,1700.0
+Sebastian Kim,TikTok,Sports,1850000,South Korea,4300.0
+Lucy Walker,YouTube,Makeup,2650000,Australia,6200.0
+Eli Wilson,Instagram,Technology,750000,Canada,1950.0
+Nova Martinez,TikTok,Music,1450000,Spain,3500.0
+Landon Taylor,YouTube,Education,2150000,UK,5200.0
+Violet Nguyen,Instagram,Travel,920000,Vietnam,2300.0
+Mateo Garcia,TikTok,Comedy,1600000,Mexico,3800.0
+Naomi Wong,YouTube,Cooking,1750000,Singapore,4200.0
+Adrian Chen,Instagram,Photography,680000,Taiwan,1800.0
+Ivy Johnson,TikTok,Fashion,1250000,USA,3000.0
+Grayson Smith,YouTube,Science,2450000,UK,5800.0
+Willow Davis,Instagram,Lifestyle,790000,Canada,2000.0
+Roman Rodriguez,TikTok,Dance,1350000,Spain,3300.0
+Emery Wilson,YouTube,Beauty,2350000,Australia,5600.0
+Aurora Lee,Twitch,Gaming,950000,South Korea,2400.0
+Hudson Brown,Instagram,Fitness,720000,USA,1900.0
+Ruby Wang,TikTok,Education,1900000,China,4400.0
+Dominic Taylor,YouTube,Comedy,2050000,UK,4900.0
+Eden Garcia,Instagram,Travel,850000,Mexico,2200.0
+Silas Chen,TikTok,Music,1600000,Taiwan,3800.0
+Piper Johnson,YouTube,Fashion,2750000,USA,6400.0
+Rio Martinez,Instagram,Technology,710000,Spain,1850.0
+Juniper Kim,TikTok,Food,1400000,South Korea,3300.0
+Tristan Wilson,YouTube,Gaming,2850000,Canada,6600.0
+Georgia Chen,Instagram,Art,580000,China,1700.0
+Xander Brown,TikTok,Sports,1950000,USA,4500.0
+Delilah Wong,YouTube,DIY,1750000,Singapore,4100.0
+Finn Davis,Instagram,Photography,650000,UK,1750.0
+Sadie Garcia,TikTok,Dance,1300000,Spain,3100.0
+Isaiah Johnson,YouTube,Education,2250000,USA,5300.0
+Rosie Smith,Instagram,Beauty,890000,Canada,2250.0
+Axel Rodriguez,TikTok,Comedy,1550000,Mexico,3700.0
+Leila Wilson,YouTube,Cooking,1850000,Australia,4300.0
+Rhys Chen,Twitch,Gaming,1050000,China,2600.0
+Harper Brown,Instagram,Fashion,750000,USA,1950.0
+Anders Lee,TikTok,Music,1700000,Sweden,4000.0
+Esme Taylor,YouTube,Science,2550000,UK,6000.0
+Cyrus Martinez,Instagram,Travel,920000,Spain,2300.0
+Maeve Johnson,TikTok,Education,1750000,Ireland,4100.0
+Apollo Wilson,YouTube,Sports,2150000,USA,5100.0
+Kaia Wong,Instagram,Lifestyle,680000,Singapore,1800.0
+Lorenzo Garcia,TikTok,Comedy,1450000,Italy,3500.0
+Thea Chen,YouTube,Beauty,2450000,China,5800.0
+Orion Brown,Instagram,Technology,790000,USA,2000.0
+Freya Smith,TikTok,Dance,1300000,UK,3100.0
+Dante Rodriguez,YouTube,Gaming,2950000,Mexico,6800.0
+Remi Wilson,Instagram,Art,560000,France,1650.0
+Hugo Lee,TikTok,Food,1650000,Spain,3900.0
+Lyla Johnson,YouTube,Fashion,2650000,USA,6200.0
+Atlas Martinez,Instagram,Photography,730000,Brazil,1900.0
+Nadia Chen,TikTok,Music,1550000,China,3700.0
+Dax Brown,YouTube,Education,2350000,UK,5600.0
+Celine Wong,Instagram,Travel,870000,Singapore,2200.0
+Marco Garcia,TikTok,Comedy,1900000,Italy,4400.0
+Paisley Wilson,YouTube,Cooking,1780000,Canada,4200.0
+Atticus Smith,Twitch,Gaming,1150000,USA,2800.0
+Dahlia Lee,Instagram,Beauty,780000,South Korea,2000.0
+Callum Rodriguez,TikTok,Sports,1850000,Spain,4300.0
+Wren Chen,YouTube,DIY,1650000,China,3900.0
+Milo Johnson,Instagram,Fitness,690000,UK,1800.0
+Talia Brown,TikTok,Dance,1400000,USA,3300.0
+Flynn Martinez,YouTube,Science,2250000,Mexico,5300.0
+Mae Wilson,Instagram,Fashion,750000,Australia,1950.0
+Nico Wong,TikTok,Education,1900000,Singapore,4400.0
+Zahra Smith,YouTube,Beauty,2550000,UK,6000.0
+Jasper Lee,Instagram,Technology,720000,Canada,1900.0
+Nina Garcia,TikTok,Music,1550000,Spain,3700.0
+Arlo Chen,YouTube,Gaming,2850000,China,6600.0
+Eliza Johnson,Instagram,Travel,880000,USA,2200.0
+Kai Rodriguez,TikTok,Comedy,1650000,Mexico,3900.0
+Lyra Wilson,YouTube,Cooking,1950000,Australia,4600.0
+Theo Brown,Instagram,Photography,670000,UK,1800.0
+Lara Martinez,TikTok,Fashion,1300000,Spain,3100.0
+Ryker Smith,YouTube,Education,2400000,USA,5700.0
+Soren Lee,Twitch,Gaming,1050000,Norway,2600.0
+Vienna Chen,Instagram,Art,590000,China,1700.0
+Bodhi Johnson,TikTok,Sports,1950000,USA,4500.0
+Anya Wong,YouTube,DIY,1750000,Singapore,4100.0
+Otto Garcia,Instagram,Lifestyle,680000,Spain,1800.0
+Bianca Wilson,TikTok,Beauty,1500000,Italy,3600.0
+Reid Brown,YouTube,Comedy,2050000,UK,4900.0
+Taliyah Martinez,Instagram,Travel,920000,Mexico,2300.0
+Adonis Chen,TikTok,Music,1600000,China,3800.0
+Brielle Smith,YouTube,Fashion,2750000,USA,6400.0
+Kenji Lee,Instagram,Technology,740000,Japan,1950.0
+Valencia Garcia,TikTok,Dance,1350000,Spain,3200.0
+Lennox Johnson,YouTube,Gaming,2950000,Canada,6800.0
+Sky Wilson,Instagram,Fitness,710000,Australia,1850.0
+Ellis Brown,TikTok,Education,1850000,UK,4300.0
+Zoya Chen,YouTube,Cooking,1850000,China,4300.0
+Onyx Martinez,Instagram,Photography,650000,Mexico,1750.0
+Nyra Wong,TikTok,Beauty,1300000,Singapore,3100.0
+Talon Smith,YouTube,Sports,2250000,USA,5300.0
+Joan Garcia,Twitch,Gaming,1100000,Spain,2700.0
+Lian Lee,Instagram,Art,580000,South Korea,1700.0
+Koda Johnson,TikTok,Comedy,1700000,Canada,4000.0
+Serena Chen,YouTube,Science,2550000,China,6000.0
+Nash Wilson,Instagram,Travel,870000,Australia,2200.0
+Paige Brown,TikTok,Fashion,1450000,UK,3500.0
+Ren Martinez,YouTube,Education,2350000,Mexico,5600.0
+Salem Smith,Instagram,Music,750000,USA,1950.0
+Tatum Lee,TikTok,Dance,1400000,South Korea,3300.0
+Wilder Garcia,YouTube,Beauty,2450000,Spain,5800.0
+Zuri Chen,Instagram,Technology,730000,China,1900.0
+Beau Johnson,TikTok,Food,1600000,USA,3800.0
+Poppy Wilson,YouTube,Gaming,2850000,UK,6600.0
+Sylvie Brown,Instagram,Art,560000,France,1650.0
+Kian Martinez,TikTok,Sports,1950000,Mexico,4500.0
+Avalon Wong,YouTube,DIY,1750000,Singapore,4100.0
+Rhen Smith,Instagram,Photography,680000,USA,1800.0
+Azura Lee,TikTok,Comedy,1550000,Japan,3700.0
+Rigel Garcia,YouTube,Cooking,1850000,Spain,4300.0
+Vega Chen,Twitch,Gaming,1050000,China,2600.0
+Octavia Johnson,Instagram,Fashion,790000,USA,2000.0
+Caius Wilson,TikTok,Education,1900000,UK,4400.0
+Indira Martinez,YouTube,Beauty,2550000,India,6000.0
+Jovan Brown,Instagram,Travel,870000,Serbia,2200.0
+Tessa Smith,TikTok,Music,1500000,USA,3600.0
+Zephyr Lee,YouTube,Science,2200000,South Korea,5200.0
+Daria Chen,Instagram,Lifestyle,680000,China,1800.0
+Keaton Garcia,TikTok,Comedy,1650000,Spain,3900.0
+Lotus Johnson,YouTube,Fashion,2750000,USA,6400.0
+Phoenix Wilson,Instagram,Technology,740000,UK,1950.0
+Elowen Smith,TikTok,Dance,1400000,Ireland,3300.0
+Ronan Brown,YouTube,Gaming,3000000,USA,7000.0
+Lilith Martinez,Instagram,Art,570000,Mexico,1700.0
+Caden Lee,TikTok,Sports,1850000,South Korea,4300.0
+Amara Chen,YouTube,DIY,1750000,China,4100.0
+Evren Wong,Instagram,Photography,690000,Turkey,1800.0
+Kyra Garcia,TikTok,Beauty,1300000,Spain,3100.0
+Lars Johnson,YouTube,Education,2400000,Norway,5700.0
+Amina Hassan,Instagram,Fitness,530000,Egypt,1600.0
+Raj Patel,YouTube,Cooking,2200000,India,5200.0
+Yuna Kim,TikTok,Dance,1600000,South Korea,3800.0
+Matteo Ricci,Instagram,Fashion,950000,Italy,2400.0
+Zainab Ahmed,YouTube,Education,1750000,UAE,4100.0
+Hiroshi Tanaka,TikTok,Comedy,1800000,Japan,4200.0
+Fatima Ali,Instagram,Beauty,820000,Pakistan,2100.0
+Oscar Schmidt,YouTube,Sports,2650000,Germany,6200.0
+Mei Lin,Twitch,Gaming,1200000,Malaysia,2900.0
+Amir Khan,Instagram,Technology,760000,Bangladesh,1950.0
+Camila Fernandez,TikTok,Music,1650000,Colombia,3900.0
+Jonas Andersen,YouTube,Science,2150000,Denmark,5100.0
+Leila Nour,Instagram,Art,610000,Morocco,1700.0
+Pedro Santos,TikTok,Food,1350000,Portugal,3200.0
+Astrid Nielsen,YouTube,DIY,1950000,Sweden,4600.0
+Dmitri Ivanov,Instagram,Travel,880000,Russia,2200.0
+Valentina Rossi,TikTok,Lifestyle,1500000,Italy,3600.0
+Ibrahim Osman,YouTube,Education,2350000,Nigeria,5600.0
+Siti Rahman,Instagram,Fashion,730000,Indonesia,1900.0
+Kwame Mensah,TikTok,Comedy,1400000,Ghana,3300.0
+Eleni Papadopoulos,YouTube,Cooking,2050000,Greece,4900.0
+Jamal Mbeki,Twitch,Gaming,950000,Kenya,2400.0
+Chantal Dubois,Instagram,Beauty,790000,Belgium,2000.0
+Victor Hernandez,TikTok,Sports,1750000,Chile,4100.0
+Priya Sharma,YouTube,Makeup,2800000,India,6500.0
+Omar Al-Farsi,Instagram,Photography,630000,Saudi Arabia,1750.0
+Ying Zhang,TikTok,Dance,1550000,China,3700.0
+Alejandro Torres,YouTube,Comedy,2250000,Spain,5300.0
+Nia Williams,Instagram,Lifestyle,680000,Jamaica,1800.0
+Gustav Lindberg,TikTok,Music,1700000,Sweden,4000.0
+Ana Silva,YouTube,Fashion,2550000,Brazil,6000.0
+Khalid Rahman,Instagram,Technology,750000,UAE,1950.0
+Ingrid Olsen,TikTok,Education,1900000,Norway,4400.0
+Chen Wei,YouTube,Gaming,3100000,Taiwan,7200.0
+Sana Malik,Instagram,Art,570000,Pakistan,1700.0
+Paolo Romano,TikTok,Food,1600000,Italy,3800.0
+Ananya Desai,YouTube,Beauty,2400000,India,5700.0
+Ibrahim Hassan,Instagram,Travel,850000,Egypt,2150.0
+Carmen Rodriguez,TikTok,Dance,1350000,Mexico,3200.0
+Nikolas Papadopoulos,YouTube,Sports,2150000,Greece,5100.0
+Mei Chen,Twitch,Gaming,1150000,China,2800.0
+Rajeev Kumar,Instagram,Fitness,710000,India,1850.0
+Luna Martinez,TikTok,Music,1500000,Spain,3600.0
+Aiden Barnes,YouTube,Science,2250000,USA,5300.0
+Zara Mahmood,Instagram,Fashion,780000,Pakistan,2000.0
+Hiroshi Yamamoto,TikTok,Comedy,1650000,Japan,3900.0
+Elena Popova,YouTube,DIY,1950000,Russia,4600.0
+Mohammed Al-Fayez,Instagram,Photography,650000,Saudi Arabia,1750.0
+Chiara Bianchi,TikTok,Beauty,1300000,Italy,3100.0
+Jun-ho Park,YouTube,Education,2350000,South Korea,5600.0
+Layla Ibrahim,Instagram,Art,590000,Egypt,1700.0
+Carlos Suarez,TikTok,Food,1450000,Spain,3500.0
+Anika Patel,YouTube,Lifestyle,2050000,India,4900.0
+Nikos Christou,Instagram,Travel,870000,Greece,2200.0
+Yasmin Ali,TikTok,Dance,1400000,UAE,3300.0
+Diego Rodriguez,YouTube,Sports,2600000,Argentina,6100.0
+Seo-yeon Kim,Twitch,Gaming,1050000,South Korea,2600.0
+Ananya Singh,Instagram,Beauty,780000,India,2000.0
+Marcus Andersson,TikTok,Comedy,1700000,Sweden,4000.0
+Valentina Costa,YouTube,Cooking,2250000,Italy,5300.0
+Farhan Ahmed,Instagram,Technology,730000,Pakistan,1900.0
+Joanna Nowak,TikTok,Fashion,1350000,Poland,3200.0
+Wei Liu,YouTube,Education,2400000,China,5700.0
+Ahmed Hassan,Instagram,Fitness,670000,Egypt,1800.0
+Maria Gonzalez,TikTok,Music,1550000,Spain,3700.0
+Takashi Nakamura,YouTube,Gaming,2950000,Japan,6800.0
+Nadia Ibrahim,Instagram,Art,560000,Morocco,1650.0
+Antonio Ferrari,TikTok,Food,1600000,Italy,3800.0
+Fatima Al-Sayed,YouTube,Beauty,2550000,Saudi Arabia,6000.0
+Raj Sharma,Instagram,Travel,890000,India,2250.0
+Yuki Tanaka,TikTok,Dance,1450000,Japan,3500.0
+Miguel Santos,YouTube,Comedy,2150000,Portugal,5100.0
+Layla Mohammed,Instagram,Lifestyle,680000,UAE,1800.0
+Erik Johansson,TikTok,Sports,1900000,Sweden,4400.0
+Priya Kapoor,YouTube,DIY,1850000,India,4300.0
+Chen Wei,Twitch,Gaming,1200000,China,2900.0
+Aisha Mahmoud,Instagram,Fashion,750000,Egypt,1950.0
+Marco Ricci,TikTok,Education,1750000,Italy,4100.0
+Siti Aminah,YouTube,Cooking,2350000,Indonesia,5600.0
+Jae-hoon Kim,Instagram,Photography,710000,South Korea,1850.0
+Sofia Garcia,TikTok,Music,1500000,Spain,3600.0
+Olga Petrov,YouTube,Science,2250000,Russia,5300.0
+Ali Khan,Instagram,Technology,770000,Pakistan,2000.0
+Marta Kovač,TikTok,Beauty,1350000,Croatia,3200.0
+Leon Schmidt,YouTube,Sports,2700000,Germany,6300.0
+Anika Das,Instagram,Art,580000,Bangladesh,1700.0
+Giovanni Romano,TikTok,Food,1550000,Italy,3700.0
+Diya Sharma,YouTube,Fashion,2650000,India,6200.0
+Hassan Ahmed,Instagram,Travel,850000,Morocco,2150.0
+Yuna Park,TikTok,Dance,1400000,South Korea,3300.0
+Mateo Fernandez,YouTube,Education,2400000,Spain,5700.0
+Leila Al-Farsi,Instagram,Lifestyle,690000,Oman,1800.0
+Hendrik Van Der Meer,TikTok,Comedy,1700000,Netherlands,4000.0
+Sakura Yamamoto,YouTube,Beauty,2550000,Japan,6000.0
+Ali Mohammed,Twitch,Gaming,1050000,UAE,2600.0
+Zara Malik,Instagram,Fitness,730000,Pakistan,1900.0
+Carlos Lopez,TikTok,Music,1600000,Mexico,3800.0
+Anjali Patel,YouTube,DIY,2050000,India,4900.0
+Matteo Conti,Instagram,Photography,670000,Italy,1800.0
+Lee Min-ji,TikTok,Fashion,1300000,South Korea,3100.0
+Ibrahim Al-Mansour,YouTube,Education,2350000,Saudi Arabia,5600.0
+Mei Wang,Instagram,Art,590000,China,1700.0
+Diego Torres,TikTok,Food,1450000,Spain,3500.0
+Yasmin Ahmed,YouTube,Cooking,2150000,Egypt,5100.0
+Viktor Petrov,Instagram,Travel,880000,Russia,2200.0
+Ananya Das,TikTok,Dance,1500000,India,3600.0
+Juan Ramirez,YouTube,Sports,2650000,Mexico,6200.0
+Li Wei,Twitch,Gaming,1150000,China,2800.0
+Priya Sharma,Instagram,Beauty,780000,India,2000.0
+Mats Nilsson,TikTok,Comedy,1650000,Sweden,3900.0
+Gabriela Santos,YouTube,Lifestyle,2250000,Brazil,5300.0
+Ahmed Ibrahim,Instagram,Technology,740000,Egypt,1950.0
+Natalia Kowalska,TikTok,Music,1350000,Poland,3200.0
+Kim Sung-ho,YouTube,Education,2400000,South Korea,5700.0
+Rania Al-Fayez,Instagram,Fashion,720000,Jordan,1900.0
+Hiroshi Sato,TikTok,Food,1550000,Japan,3700.0
+Amina Osman,YouTube,Beauty,2550000,Somalia,6000.0
+Paulo Costa,Instagram,Fitness,690000,Brazil,1800.0
+Yuki Nakamura,TikTok,Dance,1400000,Japan,3300.0
+Mohamed Hassan,YouTube,Comedy,2050000,Egypt,4900.0
+Mei Chen,Instagram,Art,580000,Taiwan,1700.0
+Alejandro Diaz,TikTok,Sports,1900000,Mexico,4400.0
+Anika Singh,YouTube,DIY,1850000,India,4300.0
+Khaled Mohammed,Instagram,Photography,660000,UAE,1800.0
+Ana Garcia,TikTok,Fashion,1300000,Spain,3100.0
+Wei Zhang,YouTube,Gaming,3050000,China,7100.0
+Layla Ibrahim,Instagram,Travel,870000,Egypt,2200.0
+Jonas Muller,TikTok,Education,1750000,Germany,4100.0
+Maria Silva,YouTube,Cooking,2350000,Portugal,5600.0
+Raj Kapoor,Instagram,Technology,730000,India,1900.0
+Sofia Torres,TikTok,Music,1500000,Spain,3600.0
+Ahmed Ali,YouTube,Fitness,2200000,Saudi Arabia,5200.0
+Jun Yamamoto,Twitch,Gaming,1100000,Japan,2700.0
+Amina Hassan,Instagram,Beauty,770000,Morocco,2000.0
+Carlos Rodriguez,TikTok,Comedy,1650000,Mexico,3900.0
+Priya Patel,YouTube,Fashion,2650000,India,6200.0
+Lee Jun-ho,Instagram,Art,590000,South Korea,1700.0
+Isabella Ferrari,TikTok,Food,1450000,Italy,3500.0
+Ibrahim Mahmoud,YouTube,Education,2400000,Egypt,5700.0
+Mei Li,Instagram,Travel,860000,China,2200.0
+Gustav Svensson,TikTok,Sports,1750000,Sweden,4100.0
+Elena Romano,YouTube,Beauty,2550000,Italy,6000.0
+Mohammed Al-Sayed,Instagram,Photography,680000,Saudi Arabia,1800.0
+Sakura Tanaka,TikTok,Dance,1400000,Japan,3300.0
+Mateo Gonzalez,YouTube,Lifestyle,2150000,Spain,5100.0
+Priya Singh,Instagram,Technology,740000,India,1950.0
+Ali Ahmed,TikTok,Music,1550000,Pakistan,3700.0
+Carmen Martinez,YouTube,DIY,1950000,Mexico,4600.0
+Wei Chen,Instagram,Fitness,700000,Taiwan,1850.0
+Marco Rossi,TikTok,Comedy,1700000,Italy,4000.0
+Aisha Al-Farsi,YouTube,Cooking,2250000,Oman,5300.0
+Ravi Kumar,Instagram,Travel,850000,India,2150.0
+Yuna Choi,TikTok,Fashion,1350000,South Korea,3200.0
+Giovanni Bianchi,YouTube,Sports,2700000,Italy,6300.0
+Fatima Ali,Instagram,Art,570000,Pakistan,1700.0
+Diego Suarez,TikTok,Education,1800000,Spain,4200.0
+Lin Wang,YouTube,Gaming,2950000,China,6800.0
+Zara Mohammed,Instagram,Beauty,780000,UAE,2000.0
+Erik Larsson,TikTok,Food,1550000,Sweden,3700.0
+Ananya Kapoor,YouTube,Music,2400000,India,5700.0
+Chen Liu,Instagram,Photography,650000,China,1750.0
+Sofia Morales,TikTok,Dance,1450000,Mexico,3500.0
+Ahmed Ibrahim,YouTube,Education,2350000,Egypt,5600.0
+Mei Tanaka,Instagram,Lifestyle,690000,Japan,1800.0
+Carlos Fernandez,TikTok,Comedy,1650000,Spain,3900.0
+Priya Sharma,YouTube,Fashion,2750000,India,6400.0
+Ali Mohammed,Twitch,Gaming,1050000,Saudi Arabia,2600.0
+Maria Gonzalez,Instagram,Art,580000,Mexico,1700.0
+Jun Park,TikTok,Sports,1950000,South Korea,4500.0
+Ana Silva,YouTube,Beauty,2550000,Brazil,6000.0
+Wei Zhang,Instagram,Technology,730000,China,1900.0
+Gustav Bergman,TikTok,Music,1500000,Sweden,3600.0
+Amina Hassan,YouTube,Cooking,2150000,Morocco,5100.0
+Raj Patel,Instagram,Travel,870000,India,2200.0
+Sakura Yamamoto,TikTok,Fashion,1300000,Japan,3100.0
+Miguel Torres,YouTube,Education,2400000,Spain,5700.0
+Layla Ibrahim,Instagram,Fitness,680000,Egypt,1800.0
+Marco Ricci,TikTok,Food,1600000,Italy,3800.0
+Priya Singh,YouTube,DIY,1950000,India,4600.0
+Ahmed Ali,Instagram,Photography,650000,UAE,1750.0
+Sofia Garcia,TikTok,Dance,1400000,Mexico,3300.0
+Jun Chen,YouTube,Gaming,3100000,China,7200.0
+Maria Lopez,Instagram,Beauty,780000,Spain,2000.0
+Ravi Kumar,TikTok,Comedy,1700000,India,4000.0
+Mei Nakamura,YouTube,Lifestyle,2250000,Japan,5300.0
+Ibrahim Al-Mansour,Instagram,Technology,740000,Saudi Arabia,1950.0
+Ana Torres,TikTok,Music,1550000,Brazil,3700.0
+Carlos Rodriguez,YouTube,Sports,2650000,Mexico,6200.0
+Priya Kapoor,Instagram,Art,590000,India,1700.0
+Hiroshi Tanaka,TikTok,Education,1800000,Japan,4200.0
+Sofia Morales,YouTube,Cooking,2350000,Spain,5600.0
+Wei Liu,Instagram,Travel,860000,China,2200.0
+Ahmed Ibrahim,TikTok,Fashion,1350000,Egypt,3200.0
+Maria Silva,YouTube,Beauty,2550000,Portugal,6000.0
+Raj Sharma,Twitch,Gaming,1150000,India,2800.0
+Yuna Park,Instagram,Fitness,700000,South Korea,1850.0
+Marco Ferrari,TikTok,Food,1550000,Italy,3700.0
+Amina Hassan,YouTube,DIY,2050000,Morocco,4900.0
+Chen Wei,Instagram,Photography,670000,Taiwan,1800.0
+Sofia Gonzalez,TikTok,Dance,1450000,Spain,3500.0
+Ibrahim Ali,YouTube,Education,2400000,Saudi Arabia,5700.0
+Priya Patel,Instagram,Lifestyle,690000,India,1800.0
+Carlos Martinez,TikTok,Comedy,1650000,Mexico,3900.0
+Mei Yamamoto,YouTube,Fashion,2750000,Japan,6400.0
+Ahmed Al-Farsi,Instagram,Technology,730000,UAE,1900.0
+Maria Rodriguez,TikTok,Music,1500000,Spain,3600.0
+Raj Kumar,YouTube,Sports,2700000,India,6300.0
+Sofia Chen,Instagram,Art,580000,China,1700.0
+Miguel Lopez,TikTok,Education,1850000,Mexico,4300.0
+Yuna Kim,YouTube,Gaming,2950000,South Korea,6800.0
+Amina Ibrahim,Instagram,Beauty,780000,Egypt,2000.0
+Marco Rossi,TikTok,Food,1600000,Italy,3800.0
+Priya Sharma,YouTube,Cooking,2250000,India,5300.0 
