@@ -64,8 +64,28 @@ public class User {
     }
 
     @Override
-    public boolean equals() {
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        User user = (User) o;
+
+        if (isSubscribed != user.isSubscribed) return false;
+        if (!username.equals(user.username)) return false;
+        return password.equals(user.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, password, isSubscribed);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", isSubscribed=" + isSubscribed +
+                '}';
     }
 
 }
