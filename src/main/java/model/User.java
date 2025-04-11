@@ -63,6 +63,9 @@ public class User {
         this.isSubscribed = false;
     }
 
+    @Override
+    public boolean equals() {
 
+    }
 
 }
