@@ -1,6 +1,7 @@
 package model;
 
 
+import java.util.Objects;
 
 /**
  * Represents a user of the influencer management system.
