@@ -8,34 +8,44 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class MainController implements IController {
     private String controllerName;
     private InfluencerRepository repository;
     private UserManager userManager;
     private UserFavorites userFavorites;
+    private IExporter exporter;
+    private IImporter importer;
     private MainView mainView;
     private User currentUser;
     private List<Influencer> currentWorkingSet;
+
 
     public MainController(MainView mainView) {
         this.controllerName = "Main Controller";
         this.mainView = mainView;
         this.repository = new InfluencerRepository();
         this.userManager = new UserManager();
+        this.exporter = null;
         this.currentWorkingSet = new ArrayList<>();
     }
 
     @Override
     public void initialize() {
+
         if (!tryLoadDataFromFile()) {
             loadSampleData();
         }
+
+        // Start with login view
         mainView.setVisible(true);
+
     }
+
 
     private boolean tryLoadDataFromFile() {
         String defaultDataPath = "src/main/resources/data/influencers.csv";
-        CSVImporter importer = new CSVImporter();
+        importer = new CSVImporter();
         List<Influencer> importedData = importer.importData(defaultDataPath);
 
         if (importedData != null && !importedData.isEmpty()) {
@@ -46,6 +56,7 @@ public class MainController implements IController {
             System.out.println("[INFO] Loaded " + importedData.size() + " influencers from " + defaultDataPath);
             return true;
         }
+
         return false;
     }
 
@@ -104,9 +115,10 @@ public class MainController implements IController {
 
             case "sort":
                 String criteria = (String) params.get("criteria");
-                boolean ascending = params.containsKey("ascending") ? (boolean) params.get("ascending") : false;
+                boolean ascending = Boolean.TRUE.equals(params.get("ascending"));
                 handleInfluencerSort(criteria, ascending);
                 break;
+
 
             case "addToFavorites":
                 if (params.containsKey("influencer")) {
@@ -117,11 +129,25 @@ public class MainController implements IController {
                 break;
 
             case "removeFromFavorites":
+
                 if (params.containsKey("influencer")) {
                     handleRemoveFromFavorites((Influencer) params.get("influencer"));
                 } else {
                     mainView.showError("Missing influencer object");
                 }
+                break;
+
+            case "export":
+                String exportFormat = (String) params.get("format");
+                String exportPath = (String) params.get("path");
+                List<Influencer> data = (List<Influencer>) params.get("data");
+                handleExport(exportFormat, exportPath, data);
+                break;
+
+            case "import":
+                String importFormat = (String) params.get("format");
+                String importPath = (String) params.get("path");
+                handleImport(importFormat, importPath);
                 break;
 
             default:
@@ -137,6 +163,7 @@ public class MainController implements IController {
 
     @Override
     public void handleUserRegistration(User user) {
+
         userManager.registerUser(user);
     }
 
@@ -261,14 +288,14 @@ public class MainController implements IController {
 
         switch (sortCriteria) {
             case "name":
-                results.sort((a, b) -> ascending ? a.getName().compareToIgnoreCase(b.getName()) : b.getName().compareToIgnoreCase(a.getName()));
+                results = sortByName(results, ascending);
                 break;
             case "followers":
-                results.sort((a, b) -> ascending ? Integer.compare(a.getFollowerCount(), b.getFollowerCount()) : Integer.compare(b.getFollowerCount(), a.getFollowerCount()));
+                results = sortByFollowers(results, ascending);
                 break;
             case "adRate":
                 validateSubscription();
-                results.sort((a, b) -> ascending ? Double.compare(a.getAdRate(), b.getAdRate()) : Double.compare(b.getAdRate(), a.getAdRate()));
+                results = sortByAdRate(results, ascending);
                 break;
             default:
                 return;
@@ -278,12 +305,43 @@ public class MainController implements IController {
         mainView.displayInfluencers(results);
     }
 
+    private List<Influencer> sortByName(List<Influencer> influencers, boolean ascending) {
+        List<Influencer> sorted = new ArrayList<>(influencers);
+        sorted.sort((a, b) -> {
+            int result = a.getName().compareToIgnoreCase(b.getName());
+            return ascending ? result : -result;
+        });
+        return sorted;
+    }
+
+    private List<Influencer> sortByFollowers(List<Influencer> influencers, boolean ascending) {
+        List<Influencer> sorted = new ArrayList<>(influencers);
+        sorted.sort((a, b) -> {
+            int result = Integer.compare(a.getFollowerCount(), b.getFollowerCount());
+            return ascending ? result : -result;
+        });
+        return sorted;
+    }
+
+    private List<Influencer> sortByAdRate(List<Influencer> influencers, boolean ascending) {
+        List<Influencer> sorted = new ArrayList<>(influencers);
+        sorted.sort((a, b) -> {
+            int result = Double.compare(a.getAdRate(), b.getAdRate());
+            return ascending ? result : -result;
+        });
+        return sorted;
+    }
+
     @Override
     public void loadAllInfluencers() {
         validateUser();
         List<Influencer> allInfluencers = repository.findAll();
         currentWorkingSet = new ArrayList<>(allInfluencers);
         mainView.displayInfluencers(allInfluencers);
+    }
+
+    public void resetWorkingSet() {
+        loadAllInfluencers();
     }
 
     @Override
@@ -323,6 +381,105 @@ public class MainController implements IController {
     }
 
     @Override
+    public void handleExport(String format, String path, List<Influencer> data) {
+        validateUser();
+
+        exporter = getExporterForFormat(format);
+        if (exporter == null) {
+            mainView.showExportError("Unsupported export format: " + format);
+            return;
+        }
+
+        boolean success = exporter.export(data, path);
+        if (success) {
+            mainView.showExportSuccess(path);
+        } else {
+            mainView.showExportError("Failed to export data");
+        }
+    }
+
+
+    public void handleImport(String format, String path) {
+        validateUser();
+
+        importer = getImporterForFormat(format);
+        if (importer == null) {
+            mainView.showError("Unsupported import format: " + format);
+            return;
+        }
+
+        List<Influencer> importedData = importer.importData(path);
+        if (importedData.isEmpty()) {
+            mainView.showError("Failed to import data or file was empty");
+        } else {
+
+            for (Influencer influencer : importedData) {
+                repository.save(influencer);
+            }
+
+            currentWorkingSet = new ArrayList<>(importedData);
+            mainView.showImportSuccess(importedData.size() + " influencers imported");
+            loadAllInfluencers();
+        }
+    }
+
+
+    private IExporter getExporterForFormat(String format) {
+        switch (format.toLowerCase()) {
+            case "csv":
+                return new CSVExporter();
+            case "json":
+                return new JSONExporter();
+            default:
+                return null;
+        }
+    }
+
+
+    private IImporter getImporterForFormat(String format) {
+        switch (format.toLowerCase()) {
+            case "csv":
+                return new CSVImporter();
+            case "json":
+                return new JSONImporter();
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public void showInfluencerListView() {
+        validateUser();
+        loadAllInfluencers();
+        mainView.showInfluencerListView();
+    }
+
+    @Override
+    public void showUserFavoritesView() {
+        validateUser();
+        loadAllFavorites();
+        mainView.showUserFavoritesView();
+    }
+
+    @Override
+    public void showExportView() {
+        validateUser();
+        mainView.showExportView();
+    }
+
+    @Override
+    public void showUserView() {
+        validateUser();
+        mainView.showUserView();
+    }
+
+    @Override
+    public void showImportView() {
+        validateUser();
+        mainView.showImportView();
+    }
+
+    @Override
     public void setCurrentUser(User user) {
         this.currentUser = user;
         mainView.setCurrentUser(user);
@@ -340,6 +497,7 @@ public class MainController implements IController {
         }
     }
 
+
     private void validateSubscription() {
         validateUser();
         if (!currentUser.isSubscribed()) {
@@ -347,11 +505,13 @@ public class MainController implements IController {
         }
     }
 
+
     private void updateViews() {
         mainView.setCurrentUser(currentUser);
     }
 
     private void loadSampleData() {
+        // Sample influencers
         repository.save(new Influencer("John Smith", "Instagram", "Fitness", 500000, "USA", 2500.0));
         repository.save(new Influencer("Emma Johnson", "YouTube", "Beauty", 2000000, "UK", 5000.0));
         repository.save(new Influencer("David Lee", "TikTok", "Comedy", 1500000, "Canada", 3000.0));
@@ -363,12 +523,16 @@ public class MainController implements IController {
         repository.save(new Influencer("James Wilson", "Twitch", "Gaming", 400000, "Australia", 1200.0));
         repository.save(new Influencer("Ava Taylor", "Instagram", "Lifestyle", 700000, "USA", 1800.0));
 
+
         try {
             userManager.registerUser(new User("admin", "admin"));
             userManager.registerUser(new User("premium", "premium"));
+
+
             User premiumUser = userManager.findUser("premium");
             premiumUser.subscribe();
-        } catch (IllegalArgumentException ignored) {
+        } catch (IllegalArgumentException e) {
+
         }
     }
 
