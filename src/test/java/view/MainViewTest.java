@@ -80,7 +80,7 @@ public class MainViewTest {
         currentFavorites.add(new Influencer("Test", "Test", "Test", 100, "Test", 100.0));
         assertEquals(1, view.getCurrentFavorites().size()); // 原列表应该不变
     }
-    }
+
 
     @Test
     public void testViewStateTransitions() {
