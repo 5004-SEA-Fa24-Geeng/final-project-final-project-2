@@ -3,10 +3,27 @@ package model;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractImporter implements IImporter {
+
+    // Imports influencers from a file.
+    public List<Influencer> importFromFile(String filePath) {
+        if (filePath == null || filePath.trim().isEmpty()) {
+            throw new IllegalArgumentException("File path cannot be null or empty");
+        }
+
+        try {
+            Path path = Paths.get(filePath);
+            String content = Files.readString(path);
+            return parseData(content);
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading file: " + filePath, e);
+        }
+    }
+
 
     protected abstract List<Influencer> parseData(String content);
 
