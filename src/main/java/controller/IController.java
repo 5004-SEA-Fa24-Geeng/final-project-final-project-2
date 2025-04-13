@@ -4,6 +4,7 @@ import model.Influencer;
 import model.User;
 import view.MainView;
 
+import java.util.List;
 import java.util.Map;
 
 public interface IController {
