@@ -10,6 +10,7 @@ import java.util.List;
 public abstract class AbstractImporter implements IImporter {
 
     // Imports influencers from a file.
+    @Override
     public List<Influencer> importFromFile(String filePath) {
         if (filePath == null || filePath.trim().isEmpty()) {
             throw new IllegalArgumentException("File path cannot be null or empty");
