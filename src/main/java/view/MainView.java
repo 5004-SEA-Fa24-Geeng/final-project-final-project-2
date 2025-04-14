@@ -12,6 +12,7 @@ import java.util.Scanner;
  */
 
 public class MainView implements IView {
+
     private User currentUser;
     private boolean isVisible;
     private List<Influencer> influencers;
@@ -399,6 +400,8 @@ public class MainView implements IView {
         return scanner;
     }
 
+
+
     /**
      * Gets the current state of the view.
      *
@@ -407,6 +410,7 @@ public class MainView implements IView {
     public ViewState getCurrentState() {
         return currentState;
     }
+
 
     /**
      * Gets the list of influencers currently displayed in the view.
@@ -425,4 +429,7 @@ public class MainView implements IView {
     public List<Influencer> getCurrentFavorites() {
         return new ArrayList<>(favorites);
     }
+
+
 }
+
