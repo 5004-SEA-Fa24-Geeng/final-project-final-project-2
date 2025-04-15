@@ -1,5 +1,6 @@
 package view;
 
+import controller.MainController;
 import model.Influencer;
 import model.User;
 
@@ -10,13 +11,13 @@ import java.util.Scanner;
 /**
  * Main view implementation for the console-based user interface.
  */
-
 public class MainView implements IView {
     private User currentUser;
     private boolean isVisible;
     private List<Influencer> influencers;
     private List<Influencer> favorites;
     private Scanner scanner;
+    private MainController controller;
 
     public enum ViewState {
         INFLUENCER_LIST,
@@ -41,6 +42,26 @@ public class MainView implements IView {
         this.currentState = ViewState.LOGIN;
     }
 
+
+    public void setController(MainController controller) {
+        this.controller = controller;
+    }
+
+
+    public String getUserInput() {
+        return scanner.nextLine();
+    }
+
+
+    public void displayMessage(String message) {
+        System.out.println(message);
+    }
+
+
+    public String promptForInput(String prompt) {
+        System.out.print(prompt);
+        return scanner.nextLine();
+    }
 
     @Override
     public void render() {
@@ -75,7 +96,6 @@ public class MainView implements IView {
         }
     }
 
-
     @Override
     public void update(Object data) {
         if (data instanceof List) {
@@ -86,7 +106,6 @@ public class MainView implements IView {
             }
         }
     }
-
 
     @Override
     public void setVisible(boolean visible) {
@@ -102,7 +121,6 @@ public class MainView implements IView {
         render();
     }
 
-
     @Override
     public void showUserFavoritesView() {
         this.currentState = ViewState.USER_FAVORITES;
@@ -114,7 +132,6 @@ public class MainView implements IView {
         this.currentState = ViewState.EXPORT;
         render();
     }
-
 
     @Override
     public void showUserView() {
@@ -192,16 +209,12 @@ public class MainView implements IView {
         scanner.nextLine();
     }
 
-
     @Override
     public void showExportError(String error) {
         System.out.println("\n[ERROR] Export failed: " + error);
         System.out.println("Press Enter to continue...");
         scanner.nextLine();
     }
-
-
-
 
     /**
      * Shows the import view.
@@ -248,7 +261,6 @@ public class MainView implements IView {
             render();
         }
     }
-
 
     /**
      * Renders the login view.
@@ -319,7 +331,6 @@ public class MainView implements IView {
         System.out.print("Select an option: ");
     }
 
-
     /**
      * Renders the favorites view.
      */
@@ -375,7 +386,6 @@ public class MainView implements IView {
         System.out.println("\nID | Name | Platform | Category | Followers | Country" +
                 (shouldShowAdRate() ? " | Ad Rate" : ""));
         System.out.println("-".repeat(80));
-
 
         for (int i = 0; i < influencers.size(); i++) {
             Influencer inf = influencers.get(i);

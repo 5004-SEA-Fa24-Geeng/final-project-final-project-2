@@ -2,18 +2,16 @@ package controller;
 
 import model.Influencer;
 import model.User;
-import view.MainView;
 
 import java.util.List;
 import java.util.Map;
 
 public interface IController {
+    String getControllerName();
 
     void initialize();
 
     void handleRequest(String action, Map<String, Object> params);
-
-    String getControllerName();
 
     void handleUserRegistration(User user);
 
@@ -51,14 +49,7 @@ public interface IController {
 
     void showUserView();
 
-    void setCurrentUser(User user);
-
     void showImportView();
 
-    void handleImport(String format, String path);
-
-    void resetWorkingSet();
-
-    MainView getMainView();
-
+    void setCurrentUser(User user);
 }

@@ -2,12 +2,13 @@ package controller;
 
 import model.*;
 import view.MainView;
+import view.MainView.ViewState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Scanner;
 
 public class MainController implements IController {
     private String controllerName;
@@ -19,7 +20,7 @@ public class MainController implements IController {
     private MainView mainView;
     private User currentUser;
     private List<Influencer> currentWorkingSet;
-
+    private boolean isRunning;
 
     public MainController(MainView mainView) {
         this.controllerName = "Main Controller";
@@ -28,20 +29,75 @@ public class MainController implements IController {
         this.userManager = new UserManager();
         this.exporter = null;
         this.currentWorkingSet = new ArrayList<>();
+        this.isRunning = false;
+
+        mainView.setController(this);
     }
 
     @Override
     public void initialize() {
-
         if (!tryLoadDataFromFile()) {
             loadSampleData();
         }
 
-        // Start with login view
         mainView.setVisible(true);
-
     }
 
+
+    public void run() {
+        isRunning = true;
+
+        while (isRunning) {
+            String input = mainView.getUserInput();
+
+            try {
+                processInputForCurrentState(input);
+            } catch (Exception e) {
+                mainView.showError("Error: " + e.getMessage());
+            }
+        }
+    }
+
+
+    private void processInputForCurrentState(String input) {
+        Map<String, Object> params = new HashMap<>();
+        ViewState currentState = mainView.getCurrentState();
+
+        switch (currentState) {
+            case LOGIN:
+                handleLoginState(input, params);
+                break;
+
+            case REGISTRATION:
+                handleRegistrationState(input, params);
+                break;
+
+            case USER_PROFILE:
+                handleUserProfileState(input, params);
+                break;
+
+            case INFLUENCER_LIST:
+                handleInfluencerListState(input, params);
+                break;
+
+            case USER_FAVORITES:
+                handleFavoritesState(input, params);
+                break;
+
+            case EXPORT:
+                handleExportState(input, params);
+                break;
+
+            case IMPORT:
+                handleImportState(input, params);
+                break;
+        }
+    }
+
+
+    public void stop() {
+        isRunning = false;
+    }
 
     private boolean tryLoadDataFromFile() {
         String defaultDataPath = "src/main/resources/data/influencers.csv";
@@ -119,7 +175,6 @@ public class MainController implements IController {
                 handleInfluencerSort(criteria, ascending);
                 break;
 
-
             case "addToFavorites":
                 if (params.containsKey("influencer")) {
                     handleAddToFavorites((Influencer) params.get("influencer"));
@@ -129,7 +184,6 @@ public class MainController implements IController {
                 break;
 
             case "removeFromFavorites":
-
                 if (params.containsKey("influencer")) {
                     handleRemoveFromFavorites((Influencer) params.get("influencer"));
                 } else {
@@ -140,7 +194,11 @@ public class MainController implements IController {
             case "export":
                 String exportFormat = (String) params.get("format");
                 String exportPath = (String) params.get("path");
-                List<Influencer> data = (List<Influencer>) params.get("data");
+                List<Influencer> data = params.containsKey("data") ?
+                        (List<Influencer>) params.get("data") :
+                        mainView.getCurrentState() == ViewState.USER_FAVORITES ?
+                                mainView.getCurrentFavorites() : mainView.getCurrentInfluencers();
+
                 handleExport(exportFormat, exportPath, data);
                 break;
 
@@ -150,8 +208,345 @@ public class MainController implements IController {
                 handleImport(importFormat, importPath);
                 break;
 
+            case "exit":
+                stop();
+                break;
+
             default:
                 mainView.showError("Unknown action: " + action);
+                break;
+        }
+    }
+
+
+    public void handleLoginState(String input, Map<String, Object> params) {
+        int option;
+        try {
+            option = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            mainView.showError("Please enter a valid number");
+            return;
+        }
+
+        switch (option) {
+            case 1:
+                String username = mainView.promptForInput("Username: ");
+                String password = mainView.promptForInput("Password: ");
+
+                params.put("username", username);
+                params.put("password", password);
+                handleRequest("login", params);
+                break;
+
+            case 2:
+                mainView.showRegistrationForm();
+                break;
+
+            case 3:
+                handleRequest("exit", null);
+                break;
+
+            default:
+                mainView.showError("Invalid option");
+                break;
+        }
+    }
+
+
+    public void handleRegistrationState(String input, Map<String, Object> params) {
+        String username = input.trim();
+
+        if (username.isEmpty()) {
+            mainView.showError("Username cannot be empty");
+            mainView.showRegistrationForm();
+            return;
+        }
+
+        String password = mainView.promptForInput("Password: ");
+
+        if (password.isEmpty()) {
+            mainView.showError("Password cannot be empty");
+            mainView.showRegistrationForm();
+            return;
+        }
+
+        params.put("user", new model.User(username, password));
+        handleRequest("register", params);
+    }
+
+
+    public void handleUserProfileState(String input, Map<String, Object> params) {
+        int option;
+        try {
+            option = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            showUserView();
+            return;
+        }
+
+        switch (option) {
+            case 1:
+                handleRequest("subscribe", params);
+                break;
+
+            case 2:
+                showInfluencerListView();
+                break;
+
+            case 3:
+                showUserFavoritesView();
+                break;
+
+            case 4:
+                handleRequest("logout", params);
+                break;
+
+            default:
+                showUserView();
+                break;
+        }
+    }
+
+
+    public void handleInfluencerListState(String input, Map<String, Object> params) {
+        int option;
+        try {
+            option = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            showInfluencerListView();
+            return;
+        }
+
+        switch (option) {
+            case 1:
+                String query = mainView.promptForInput("Enter name to search (in current results): ");
+                params.put("query", query);
+                handleRequest("search", params);
+                showInfluencerListView();
+                break;
+
+            case 2:
+                String platform = mainView.promptForInput("Enter platform to filter by (in current results): ");
+                params.put("platform", platform);
+                handleRequest("filter", params);
+                break;
+
+            case 3:
+                String category = mainView.promptForInput("Enter category to filter by (in current results): ");
+                params.put("category", category);
+                handleRequest("filter", params);
+                break;
+
+            case 4:
+                int min = Integer.parseInt(mainView.promptForInput("Enter minimum followers (for current results): "));
+                int max = Integer.parseInt(mainView.promptForInput("Enter maximum followers (0 for no limit): "));
+                params.put("minFollowers", min);
+                params.put("maxFollowers", max);
+                handleRequest("filter", params);
+                break;
+
+            case 5:
+                String country = mainView.promptForInput("Enter country to filter by (in current results): ");
+                params.put("country", country);
+                handleRequest("filter", params);
+                break;
+
+            case 6:
+                mainView.displayMessage("Sorting current results by name (A-Z)...");
+                params.put("criteria", "name");
+                params.put("ascending", true);
+                handleRequest("sort", params);
+                break;
+
+            case 7:
+                mainView.displayMessage("Sorting current results by followers (high to low)...");
+                params.put("criteria", "followers");
+                params.put("ascending", false);
+                handleRequest("sort", params);
+                break;
+
+            case 8:
+                mainView.displayMessage("Sorting current results by ad rate (high to low)...");
+                params.put("criteria", "adRate");
+                params.put("ascending", false);
+                handleRequest("sort", params);
+                break;
+
+            case 9:
+                int id = Integer.parseInt(mainView.promptForInput("Enter ID of influencer to add to favorites: ")) - 1;
+                List<Influencer> currentInfluencers = mainView.getCurrentInfluencers();
+
+                if (id >= 0 && id < currentInfluencers.size()) {
+                    Influencer influencerToAdd = currentInfluencers.get(id);
+                    params.put("influencer", influencerToAdd);
+                    handleRequest("addToFavorites", params);
+                } else {
+                    mainView.showError("Invalid influencer ID");
+                }
+                showInfluencerListView();
+                break;
+
+            case 10:
+                showExportView();
+                break;
+
+            case 11:
+                showImportView();
+                break;
+
+            case 12:
+                showUserView();
+                break;
+
+            case 13:
+                mainView.displayMessage("Resetting to all influencers...");
+                resetWorkingSet();
+                showInfluencerListView();
+                break;
+
+            default:
+                showInfluencerListView();
+                break;
+        }
+    }
+
+
+    public void handleFavoritesState(String input, Map<String, Object> params) {
+        int option;
+        try {
+            option = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            showUserFavoritesView();
+            return;
+        }
+
+        switch (option) {
+            case 1:
+                String name = mainView.promptForInput("Enter name to search: ");
+                handleFavoritesSearch(name);
+                showUserFavoritesView();
+                break;
+
+            case 2:
+                int id = Integer.parseInt(mainView.promptForInput("Enter ID of favorite to remove: ")) - 1;
+                List<Influencer> favorites = mainView.getCurrentFavorites();
+
+                if (id >= 0 && id < favorites.size()) {
+                    Influencer influencerToRemove = favorites.get(id);
+                    params.put("influencer", influencerToRemove);
+                    handleRequest("removeFromFavorites", params);
+                } else {
+                    mainView.showError("Invalid favorite ID");
+                }
+                showUserFavoritesView();
+                break;
+
+            case 3:
+                showExportView();
+                params.put("exportingFavorites", true);
+                break;
+
+            case 4:
+                showUserView();
+                break;
+
+            default:
+                showUserFavoritesView();
+                break;
+        }
+    }
+
+
+    public void handleExportState(String input, Map<String, Object> params) {
+        int option;
+        try {
+            option = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            showExportView();
+            return;
+        }
+
+        boolean isFavorites = params.containsKey("exportingFavorites") && (boolean) params.get("exportingFavorites");
+
+        switch (option) {
+            case 1:
+            case 2:
+                String format = option == 1 ? "csv" : "json";
+                String defaultPath = "export." + format.toLowerCase();
+
+                String path = mainView.promptForInput("Enter path to save file [" + defaultPath + "]: ");
+                if (path.trim().isEmpty()) {
+                    path = defaultPath;
+                }
+
+                params.put("format", format);
+                params.put("path", path);
+
+                if (isFavorites) {
+                    loadAllFavorites();
+                    params.put("data", mainView.getCurrentFavorites());
+                } else {
+                    loadAllInfluencers();
+                    params.put("data", mainView.getCurrentInfluencers());
+                }
+
+                handleRequest("export", params);
+
+                if (isFavorites) {
+                    showUserFavoritesView();
+                } else {
+                    showInfluencerListView();
+                }
+                break;
+
+            case 3:
+                if (isFavorites) {
+                    showUserFavoritesView();
+                } else {
+                    showInfluencerListView();
+                }
+                break;
+
+            default:
+                showExportView();
+                break;
+        }
+    }
+
+
+    public void handleImportState(String input, Map<String, Object> params) {
+        int option;
+        try {
+            option = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            showImportView();
+            return;
+        }
+
+        switch (option) {
+            case 1:
+            case 2:
+                String format = option == 1 ? "csv" : "json";
+                String defaultPath = option == 1 ? "src/main/resources/data/influencers.csv" : "src/main/resources/data/influencers.json";
+
+                String path = mainView.promptForInput("Enter path to import file [" + defaultPath + "]: ");
+                if (path.trim().isEmpty()) {
+                    path = defaultPath;
+                }
+
+                params.put("format", format);
+                params.put("path", path);
+
+                handleRequest("import", params);
+                showInfluencerListView();
+                break;
+
+            case 3:
+                showInfluencerListView();
+                break;
+
+            default:
+                showImportView();
                 break;
         }
     }
@@ -163,7 +558,6 @@ public class MainController implements IController {
 
     @Override
     public void handleUserRegistration(User user) {
-
         userManager.registerUser(user);
     }
 
@@ -398,7 +792,6 @@ public class MainController implements IController {
         }
     }
 
-
     public void handleImport(String format, String path) {
         validateUser();
 
@@ -412,7 +805,6 @@ public class MainController implements IController {
         if (importedData.isEmpty()) {
             mainView.showError("Failed to import data or file was empty");
         } else {
-
             for (Influencer influencer : importedData) {
                 repository.save(influencer);
             }
@@ -422,7 +814,6 @@ public class MainController implements IController {
             loadAllInfluencers();
         }
     }
-
 
     private IExporter getExporterForFormat(String format) {
         switch (format.toLowerCase()) {
@@ -434,7 +825,6 @@ public class MainController implements IController {
                 return null;
         }
     }
-
 
     private IImporter getImporterForFormat(String format) {
         switch (format.toLowerCase()) {
@@ -497,14 +887,12 @@ public class MainController implements IController {
         }
     }
 
-
     private void validateSubscription() {
         validateUser();
         if (!currentUser.isSubscribed()) {
             throw new IllegalStateException("Premium subscription required");
         }
     }
-
 
     private void updateViews() {
         mainView.setCurrentUser(currentUser);
@@ -523,16 +911,14 @@ public class MainController implements IController {
         repository.save(new Influencer("James Wilson", "Twitch", "Gaming", 400000, "Australia", 1200.0));
         repository.save(new Influencer("Ava Taylor", "Instagram", "Lifestyle", 700000, "USA", 1800.0));
 
-
         try {
             userManager.registerUser(new User("admin", "admin"));
             userManager.registerUser(new User("premium", "premium"));
 
-
             User premiumUser = userManager.findUser("premium");
             premiumUser.subscribe();
         } catch (IllegalArgumentException e) {
-
+            // 忽略已存在的用户
         }
     }
 
