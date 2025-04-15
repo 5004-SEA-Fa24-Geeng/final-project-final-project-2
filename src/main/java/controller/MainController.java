@@ -613,66 +613,23 @@ public class MainController implements IController {
     @Override
     public void handleInfluencerFilter(Map<String, Object> filterCriteria) {
         validateUser();
-        List<Influencer> results = new ArrayList<>(currentWorkingSet);
 
         if (filterCriteria.containsKey("platform")) {
             String platform = (String) filterCriteria.get("platform");
-            results = filterByPlatform(results, platform);
+            currentWorkingSet = repository.filterByPlatform(platform);
         } else if (filterCriteria.containsKey("category")) {
             String category = (String) filterCriteria.get("category");
-            results = filterByCategory(results, category);
+            currentWorkingSet = repository.filterByCategory(category);
         } else if (filterCriteria.containsKey("minFollowers") || filterCriteria.containsKey("maxFollowers")) {
             int min = filterCriteria.containsKey("minFollowers") ? (int) filterCriteria.get("minFollowers") : 0;
             int max = filterCriteria.containsKey("maxFollowers") ? (int) filterCriteria.get("maxFollowers") : Integer.MAX_VALUE;
-            results = filterByFollowerRange(results, min, max);
+            currentWorkingSet = repository.filterByFollowerRange(min, max);
         } else if (filterCriteria.containsKey("country")) {
             String country = (String) filterCriteria.get("country");
-            results = filterByCountry(results, country);
+            currentWorkingSet = repository.filterByCountry(country);
         }
 
-        currentWorkingSet = results;
-        mainView.displayInfluencers(results);
-    }
-
-    private List<Influencer> filterByPlatform(List<Influencer> influencers, String platform) {
-        List<Influencer> results = new ArrayList<>();
-        for (Influencer influencer : influencers) {
-            if (influencer.getPlatform().equalsIgnoreCase(platform)) {
-                results.add(influencer);
-            }
-        }
-        return results;
-    }
-
-    private List<Influencer> filterByCategory(List<Influencer> influencers, String category) {
-        List<Influencer> results = new ArrayList<>();
-        for (Influencer influencer : influencers) {
-            if (influencer.getCategory().equalsIgnoreCase(category)) {
-                results.add(influencer);
-            }
-        }
-        return results;
-    }
-
-    private List<Influencer> filterByFollowerRange(List<Influencer> influencers, int min, int max) {
-        List<Influencer> results = new ArrayList<>();
-        for (Influencer influencer : influencers) {
-            int followers = influencer.getFollowerCount();
-            if (followers >= min && followers <= max) {
-                results.add(influencer);
-            }
-        }
-        return results;
-    }
-
-    private List<Influencer> filterByCountry(List<Influencer> influencers, String country) {
-        List<Influencer> results = new ArrayList<>();
-        for (Influencer influencer : influencers) {
-            if (influencer.getCountry().equalsIgnoreCase(country)) {
-                results.add(influencer);
-            }
-        }
-        return results;
+        mainView.displayInfluencers(currentWorkingSet);
     }
 
     @Override
@@ -925,3 +882,5 @@ public class MainController implements IController {
         return mainView;
     }
 }
+
+

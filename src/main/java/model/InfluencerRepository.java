@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 /**
  * Repository implementation for managing Influencer entities.
  */
@@ -18,7 +17,6 @@ public class InfluencerRepository implements IRepository {
     public InfluencerRepository() {
         this.influencers = new ArrayList<>();
     }
-
 
     @Override
     public void save(Object entity) {
@@ -64,52 +62,29 @@ public class InfluencerRepository implements IRepository {
 
     @Override
     public List<Influencer> filterByPlatform(String platform) {
-        if (platform == null || platform.isEmpty()) {
-            return new ArrayList<>(influencers);
-        }
-
-        String searchPlatform = platform.toLowerCase();
         return influencers.stream()
-                .filter(i -> i.getPlatform().toLowerCase().equals(searchPlatform))
+                .filter(i -> i.getPlatform().equalsIgnoreCase(platform))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Influencer> filterByCategory(String category) {
-        if (category == null || category.isEmpty()) {
-            return new ArrayList<>(influencers);
-        }
-
-        String searchCategory = category.toLowerCase();
         return influencers.stream()
-                .filter(i -> i.getCategory().toLowerCase().equals(searchCategory))
+                .filter(i -> i.getCategory().equalsIgnoreCase(category))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Influencer> filterByFollowerRange(int min, int max) {
-        if (min < 0) {
-            min = 0;
-        }
-
-        final int finalMin = min;
-        final int finalMax = max;
-
         return influencers.stream()
-                .filter(i -> i.getFollowerCount() >= finalMin &&
-                        (finalMax <= 0 || i.getFollowerCount() <= finalMax))
+                .filter(i -> i.getFollowerCount() >= min && i.getFollowerCount() <= max)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Influencer> filterByCountry(String country) {
-        if (country == null || country.isEmpty()) {
-            return new ArrayList<>(influencers);
-        }
-
-        String searchCountry = country.toLowerCase();
         return influencers.stream()
-                .filter(i -> i.getCountry().toLowerCase().equals(searchCountry))
+                .filter(i -> i.getCountry().equalsIgnoreCase(country))
                 .collect(Collectors.toList());
     }
 
