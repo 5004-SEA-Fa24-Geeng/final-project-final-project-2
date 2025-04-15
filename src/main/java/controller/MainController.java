@@ -918,7 +918,6 @@ public class MainController implements IController {
             User premiumUser = userManager.findUser("premium");
             premiumUser.subscribe();
         } catch (IllegalArgumentException e) {
-            // 忽略已存在的用户
         }
     }
 
