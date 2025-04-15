@@ -46,7 +46,7 @@ public class InfluencerRepository implements IRepository {
     }
 
     @Override
-    public List findAll() {
+    public List<Influencer> findAll() {
         return new ArrayList<>(influencers);
     }
 

@@ -8,7 +8,7 @@ public interface IRepository {
 
     void delete(Object entity);
 
-    List findAll();
+    List<Influencer> findAll();
 
     List<Influencer> searchByName(String name);
 
