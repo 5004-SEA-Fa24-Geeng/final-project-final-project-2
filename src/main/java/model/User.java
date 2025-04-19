@@ -1,15 +1,17 @@
 package model;
 
-
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Represents a user of the influencer management system.
  */
-public class User {
+public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String username;
     private String password;
     private boolean isSubscribed;
+    private UserFavorites favorites;
 
     /**
      * Constructs a User with the specified username and password.
@@ -21,6 +23,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.isSubscribed = false; // Default value
+        // Favorites will be set by MainController
     }
 
     /**
@@ -64,21 +67,25 @@ public class User {
         this.isSubscribed = false;
     }
 
+    public UserFavorites getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(UserFavorites favorites) {
+        this.favorites = favorites;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         User user = (User) o;
-
-        if (isSubscribed != user.isSubscribed) return false;
-        if (!username.equals(user.username)) return false;
-        return password.equals(user.password);
+        return username.equals(user.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, password, isSubscribed);
+        return username.hashCode();
     }
 
     @Override
@@ -88,5 +95,4 @@ public class User {
                 ", isSubscribed=" + isSubscribed +
                 '}';
     }
-
 }

@@ -1,36 +1,37 @@
 package model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Represents an Influencer entity with relevant information for the influencer management system.
  */
-public class Influencer {
+public class Influencer implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String name;
     private String platform;
     private String category;
-    private int followerCount;
-    private String country;
+    private int followers;
     private double adRate;
+    private String country;
 
     /**
      * Constructs an Influencer with the specified attributes.
      *
-     * @param name          the name of the influencer
-     * @param platform      the social media platform they primarily use
-     * @param category      the content category they specialize in
-     * @param followerCount the number of followers they have
-     * @param country       the country they are based in
-     * @param adRate        the advertising rate they charge
+     * @param name       the name of the influencer
+     * @param platform   the social media platform they primarily use
+     * @param category   the content category they specialize in
+     * @param followers  the number of followers they have
+     * @param adRate     the advertising rate they charge
+     * @param country    the country they are based in
      */
-    public Influencer(String name, String platform, String category, int followerCount,
-                      String country, double adRate) {
+    public Influencer(String name, String platform, String category, int followers, double adRate, String country) {
         this.name = name;
         this.platform = platform;
         this.category = category;
-        this.followerCount = followerCount;
-        this.country = country;
+        this.followers = followers;
         this.adRate = adRate;
+        this.country = country;
     }
 
     /**
@@ -65,17 +66,8 @@ public class Influencer {
      *
      * @return the follower count of the influencer
      */
-    public int getFollowerCount() {
-        return followerCount;
-    }
-
-    /**
-     * Gets the country of the influencer.
-     *
-     * @return the country of the influencer
-     */
-    public String getCountry() {
-        return country;
+    public int getFollowers() {
+        return followers;
     }
 
     /**
@@ -88,13 +80,21 @@ public class Influencer {
     }
 
     /**
+     * Gets the country of the influencer.
+     *
+     * @return the country of the influencer
+     */
+    public String getCountry() {
+        return country;
+    }
+
+    /**
      * Sets the name of the influencer.
      *
      * @param name the new name for the influencer
      */
     public void setName(String name) {
         this.name = name;
-
     }
 
     /**
@@ -118,19 +118,10 @@ public class Influencer {
     /**
      * Sets the follower count of the influencer.
      *
-     * @param followerCount the new follower count for the influencer
+     * @param followers the new follower count for the influencer
      */
-    public void setFollowerCount(int followerCount) {
-        this.followerCount = followerCount;
-    }
-
-    /**
-     * Sets the country of the influencer.
-     *
-     * @param country the new country for the influencer
-     */
-    public void setCountry(String country) {
-        this.country = country;
+    public void setFollowers(int followers) {
+        this.followers = followers;
     }
 
     /**
@@ -142,24 +133,31 @@ public class Influencer {
         this.adRate = adRate;
     }
 
+    /**
+     * Sets the country of the influencer.
+     *
+     * @param country the new country for the influencer
+     */
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Influencer that = (Influencer) o;
-
-        if (followerCount != that.followerCount) return false;
-        if (Double.compare(that.adRate, adRate) != 0) return false;
-        if (!name.equals(that.name)) return false;
-        if (!platform.equals(that.platform)) return false;
-        if (!category.equals(that.category)) return false;
-        return country.equals(that.country);
+        return followers == that.followers &&
+                Double.compare(that.adRate, adRate) == 0 &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(platform, that.platform) &&
+                Objects.equals(category, that.category) &&
+                Objects.equals(country, that.country);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, platform, category, followerCount, country, Double.hashCode(adRate));
+        return Objects.hash(name, platform, category, followers, adRate, country);
     }
 
     @Override
@@ -168,12 +166,10 @@ public class Influencer {
                 "name='" + name + '\'' +
                 ", platform='" + platform + '\'' +
                 ", category='" + category + '\'' +
-                ", followerCount=" + followerCount +
-                ", country='" + country + '\'' +
+                ", followers=" + followers +
                 ", adRate=" + adRate +
+                ", country='" + country + '\'' +
                 '}';
     }
-
-
-
 }
+

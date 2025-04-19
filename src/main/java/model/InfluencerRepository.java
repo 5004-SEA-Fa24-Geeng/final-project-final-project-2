@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 /**
  * Repository implementation for managing Influencer entities.
  */
-public class InfluencerRepository implements IRepository {
+public class InfluencerRepository implements IRepository<Influencer> {
     private List<Influencer> influencers;
 
     /**
@@ -19,28 +19,25 @@ public class InfluencerRepository implements IRepository {
     }
 
     @Override
-    public void save(Object entity) {
-        if (!(entity instanceof Influencer)) {
-            throw new IllegalArgumentException("Entity must be an Influencer");
+    public void save(Influencer entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("Entity cannot be null");
         }
 
-        Influencer influencer = (Influencer) entity;
-
         // Remove existing influencer with same name if exists
-        influencers.removeIf(i -> i.getName().equals(influencer.getName()));
+        influencers.removeIf(i -> i.getName().equals(entity.getName()));
 
         // Add the new/updated influencer
-        influencers.add(influencer);
+        influencers.add(entity);
     }
 
     @Override
-    public void delete(Object entity) {
-        if (!(entity instanceof Influencer)) {
-            throw new IllegalArgumentException("Entity must be an Influencer");
+    public void delete(Influencer entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("Entity cannot be null");
         }
 
-        Influencer influencer = (Influencer) entity;
-        influencers.remove(influencer);
+        influencers.remove(entity);
     }
 
     @Override
@@ -77,7 +74,10 @@ public class InfluencerRepository implements IRepository {
     @Override
     public List<Influencer> filterByFollowerRange(int min, int max) {
         return influencers.stream()
-                .filter(i -> i.getFollowerCount() >= min && i.getFollowerCount() <= max)
+                .filter(i -> {
+                    int followers = i.getFollowers();
+                    return followers >= min && (max == 0 || followers <= max);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -98,7 +98,7 @@ public class InfluencerRepository implements IRepository {
     @Override
     public List<Influencer> sortByFollowers() {
         return influencers.stream()
-                .sorted(Comparator.comparingInt(Influencer::getFollowerCount).reversed())
+                .sorted(Comparator.comparingInt(Influencer::getFollowers).reversed())
                 .collect(Collectors.toList());
     }
 

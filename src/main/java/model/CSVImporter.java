@@ -5,9 +5,23 @@ import java.util.List;
 
 /**
  * Importer implementation for CSV format.
+ * Parses CSV files containing influencer data in the format:
+ * name,platform,category,followers,country,adRate
+ * Supports quoted fields and escaped quotes.
+ *
+ * @author Your Name
+ * @version 1.0
  */
 public class CSVImporter extends AbstractImporter {
 
+    /**
+     * Parses the content of a CSV file into a list of Influencer objects.
+     * Handles header row detection and empty lines.
+     *
+     * @param content the CSV content to parse
+     * @return a list of parsed Influencer objects
+     * @throws IllegalArgumentException if content is null
+     */
     @Override
     protected List<Influencer> parseData(String content) {
         List<Influencer> influencers = new ArrayList<>();
@@ -45,7 +59,15 @@ public class CSVImporter extends AbstractImporter {
         return influencers;
     }
 
-    // Parses a CSV line into an Influencer object.
+    /**
+     * Parses a single CSV line into an Influencer object.
+     * Handles quoted fields and escaped quotes according to CSV standards.
+     *
+     * @param line the CSV line to parse
+     * @return the parsed Influencer object, or null if parsing fails
+     * @throws NumberFormatException if numeric fields cannot be parsed
+     * @throws IllegalArgumentException if the line format is invalid
+     */
     private Influencer parseCSVLine(String line) {
         List<String> fields = new ArrayList<>();
         StringBuilder field = new StringBuilder();
@@ -90,7 +112,7 @@ public class CSVImporter extends AbstractImporter {
             String country = fields.get(4).trim();
             double adRate = Double.parseDouble(fields.get(5).trim());
 
-            return new Influencer(name, platform, category, followerCount, country, adRate);
+            return new Influencer(name, platform, category, followerCount, adRate, country);
         } catch (NumberFormatException e) {
             System.err.println("Error parsing numbers in CSV line: " + line);
             e.printStackTrace();

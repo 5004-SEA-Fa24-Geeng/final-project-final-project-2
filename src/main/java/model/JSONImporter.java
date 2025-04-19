@@ -7,9 +7,31 @@ import java.util.regex.Pattern;
 
 /**
  * Importer implementation for JSON format.
+ * Parses JSON files containing influencer data in the format:
+ * {
+ *   "name": "value",
+ *   "platform": "value",
+ *   "category": "value",
+ *   "followerCount": number,
+ *   "country": "value",
+ *   "adRate": number
+ * }
+ * Uses regex-based parsing for demonstration purposes.
+ * For production code, consider using a proper JSON library like Jackson.
+ *
+ * @author Your Name
+ * @version 1.0
  */
 public class JSONImporter extends AbstractImporter {
 
+    /**
+     * Parses the content of a JSON file into a list of Influencer objects.
+     * Uses regex to find and parse individual JSON objects.
+     *
+     * @param content the JSON content to parse
+     * @return a list of parsed Influencer objects
+     * @throws IllegalArgumentException if content is null
+     */
     @Override
     protected List<Influencer> parseData(String content) {
         List<Influencer> influencers = new ArrayList<>();
@@ -42,7 +64,15 @@ public class JSONImporter extends AbstractImporter {
         return influencers;
     }
 
-    // Parses a JSON object string into an Influencer object.
+    /**
+     * Parses a single JSON object string into an Influencer object.
+     * Extracts and validates all required fields.
+     *
+     * @param jsonObject the JSON object string to parse
+     * @return the parsed Influencer object, or null if parsing fails
+     * @throws NumberFormatException if numeric fields cannot be parsed
+     * @throws IllegalArgumentException if required fields are missing
+     */
     private Influencer parseJSONObject(String jsonObject) {
         // Extract each field using regex
         String name = extractJsonField(jsonObject, "name");
@@ -63,7 +93,7 @@ public class JSONImporter extends AbstractImporter {
             int followerCount = Integer.parseInt(followerCountStr);
             double adRate = Double.parseDouble(adRateStr);
 
-            return new Influencer(name, platform, category, followerCount, country, adRate);
+            return new Influencer(name, platform, category, followerCount, adRate, country);
         } catch (NumberFormatException e) {
             System.err.println("Error parsing numbers in JSON object: " + jsonObject);
             e.printStackTrace();
@@ -71,7 +101,14 @@ public class JSONImporter extends AbstractImporter {
         }
     }
 
-    // Extracts a field value from a JSON object string.
+    /**
+     * Extracts a field value from a JSON object string using regex.
+     * Supports both quoted and unquoted values.
+     *
+     * @param jsonObject the JSON object string to search
+     * @param fieldName the name of the field to extract
+     * @return the extracted field value, or null if not found
+     */
     private String extractJsonField(String jsonObject, String fieldName) {
         // Pattern to match "fieldName": "value" or "fieldName": value
         String pattern = "\"" + fieldName + "\"\\s*:\\s*\"?([^\",}]*)\"?";
