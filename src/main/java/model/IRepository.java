@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @param <T> the type of entity managed by the repository
  */
-public interface IRepository<T> extends ISortable<T>, IFilterable<T> {
+public interface IRepository<T> extends ISearchable<T>, ISortable<T>, IFilterable<T> {
 
     /**
      * Saves an entity to the repository.
