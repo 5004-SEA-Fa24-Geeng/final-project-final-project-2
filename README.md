@@ -1,17 +1,6 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/IE0ITl4j)
 # Final Project for CS 5004 - (Influencer Data Management System)
 
-(remove this and add your sections/elements)
-This readme should contain the following information: 
-
-* The group member's names and link to their personal githubs
-* The application name and a brief description of the application
-* Links to design documents and manuals
-* Instructions on how to run the application
-
-Ask yourself, if you started here in the readme, would you have what you need to work on this project and/or use the application?
-
-
 ## Introduction
 Our Influencer Data Management System is a console-based application to help marketing professionals and businesses effectively manage social media influencer data. 
 It follows the MVC (Model-View-Controller) architecture and implements various design patterns. Key features include data import/export 
@@ -21,9 +10,10 @@ control, and a personalized favorites system allowing user to maintain a favorit
 ---
 
 ## Group Members and Github Links
-Junyu Li [Brent-LI-Junyu](https://github.com/Brent-LI-Junyu)
 
 Xingchen Liu [ivanlxc](https://github.com/ivanlxc)
+
+Junyu Li [Brent-LI-Junyu](https://github.com/Brent-LI-Junyu)
 
 Qianfu Peng [Cora1231](https://github.com/Cora1231)
 
