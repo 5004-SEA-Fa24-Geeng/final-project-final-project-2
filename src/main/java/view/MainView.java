@@ -14,21 +14,10 @@ import java.util.Scanner;
 public class MainView implements IView {
     private User currentUser;
     private boolean isVisible;
-    private List<Influencer> influencers;
-    private List<Influencer> favorites;
+    private List<Influencer> currentInfluencers;
+    private List<Influencer> currentFavorites;
     private Scanner scanner;
     private MainController controller;
-
-    public enum ViewState {
-        INFLUENCER_LIST,
-        USER_FAVORITES,
-        EXPORT,
-        IMPORT,
-        USER_PROFILE,
-        LOGIN,
-        REGISTRATION
-    }
-
     private ViewState currentState;
 
     /**
@@ -36,8 +25,8 @@ public class MainView implements IView {
      */
     public MainView() {
         this.isVisible = false;
-        this.influencers = new ArrayList<>();
-        this.favorites = new ArrayList<>();
+        this.currentInfluencers = new ArrayList<>();
+        this.currentFavorites = new ArrayList<>();
         this.scanner = new Scanner(System.in);
         this.currentState = ViewState.LOGIN;
     }
@@ -47,22 +36,39 @@ public class MainView implements IView {
         this.controller = controller;
     }
 
-
+    /**
+     * Gets user input from console.
+     *
+     * @return string input from user
+     */
     public String getUserInput() {
         return scanner.nextLine();
     }
 
-
+    /**
+     * Displays message to user.
+     *
+     * @param message text to display
+     */
     public void displayMessage(String message) {
         System.out.println(message);
     }
 
-
+    /**
+     * Prompts user for input with specific prompt text.
+     *
+     * @param prompt text to display before waiting for input
+     * @return user's input string
+     */
     public String promptForInput(String prompt) {
         System.out.print(prompt);
         return scanner.nextLine();
     }
 
+    /**
+     * Renders the current view based on the current state.
+     * Does nothing if view is not visible.
+     */
     @Override
     public void render() {
         if (!isVisible) {
@@ -96,17 +102,28 @@ public class MainView implements IView {
         }
     }
 
+    /**
+     * Updates view data when model changes.
+     *
+     * @param data object containing updated model data
+     */
     @Override
     public void update(Object data) {
         if (data instanceof List) {
             List<?> dataList = (List<?>) data;
             if (!dataList.isEmpty() && dataList.get(0) instanceof Influencer) {
-                this.influencers = new ArrayList<>((List<Influencer>) data);
+                this.currentInfluencers = new ArrayList<>((List<Influencer>) data);
                 updateInfluencerDisplay();
             }
         }
     }
 
+    /**
+     * Sets visibility of the view.
+     * Renders the view if set to visible.
+     *
+     * @param visible true to show view, false to hide
+     */
     @Override
     public void setVisible(boolean visible) {
         this.isVisible = visible;
@@ -115,42 +132,66 @@ public class MainView implements IView {
         }
     }
 
+
+    /**
+     * Displays the influencer list view.
+     */
     @Override
     public void showInfluencerListView() {
         this.currentState = ViewState.INFLUENCER_LIST;
         render();
     }
 
+    /**
+     * Displays the user favorites view.
+     */
     @Override
     public void showUserFavoritesView() {
         this.currentState = ViewState.USER_FAVORITES;
         render();
     }
 
+    /**
+     * Displays the export view with format options.
+     */
     @Override
     public void showExportView() {
         this.currentState = ViewState.EXPORT;
         render();
     }
 
+    /**
+     * Displays the user profile view.
+     */
     @Override
     public void showUserView() {
         this.currentState = ViewState.USER_PROFILE;
         render();
     }
 
+    /**
+     * Displays the login form.
+     */
     @Override
     public void showLoginForm() {
         this.currentState = ViewState.LOGIN;
         render();
     }
 
+    /**
+     * Displays the registration form.
+     */
     @Override
     public void showRegistrationForm() {
         this.currentState = ViewState.REGISTRATION;
         render();
     }
 
+    /**
+     * Displays user profile with specified user information.
+     *
+     * @param user the user whose profile to display
+     */
     @Override
     public void showUserProfile(User user) {
         this.currentUser = user;
@@ -158,6 +199,11 @@ public class MainView implements IView {
         render();
     }
 
+    /**
+     * Displays error message and waits for user acknowledgment.
+     *
+     * @param message error message to display
+     */
     @Override
     public void showError(String message) {
         System.out.println("\n[ERROR] " + message);
@@ -165,18 +211,33 @@ public class MainView implements IView {
         scanner.nextLine();
     }
 
+    /**
+     * Sets the currently logged in user and updates display.
+     *
+     * @param user the current user, or null if no user logged in
+     */
     @Override
     public void setCurrentUser(User user) {
         this.currentUser = user;
         updateUserDisplay();
     }
 
+    /**
+     * Updates and displays the influencer list.
+     *
+     * @param influencers list of influencers to display
+     */
     @Override
     public void displayInfluencers(List<Influencer> influencers) {
-        this.influencers = new ArrayList<>(influencers);
+        this.currentInfluencers = new ArrayList<>(influencers);
         updateInfluencerDisplay();
     }
 
+    /**
+     * Displays search results.
+     *
+     * @param results list of influencers matching search criteria
+     */
     @Override
     public void displaySearchResults(List<Influencer> results) {
         System.out.println("\n==== Search Results ====");
@@ -185,23 +246,43 @@ public class MainView implements IView {
         scanner.nextLine();
     }
 
+
+    /**
+     * Determines if ad rate information should be displayed.
+     *
+     * @return true if ad rates should be shown (user is subscribed)
+     */
     @Override
     public boolean shouldShowAdRate() {
         return currentUser != null && currentUser.isSubscribed();
     }
 
+    /**
+     * Updates and displays user favorites.
+     *
+     * @param favorites list of favorite influencers
+     */
     @Override
     public void displayFavorites(List<Influencer> favorites) {
-        this.favorites = new ArrayList<>(favorites);
+        this.currentFavorites = new ArrayList<>(favorites);
         updateFavoritesDisplay();
     }
 
+
+    /**
+     * Displays export format options.
+     */
     @Override
     public void showExportOptions() {
         this.currentState = ViewState.EXPORT;
         render();
     }
 
+    /**
+     * Displays export success message and waits for user acknowledgment.
+     *
+     * @param path path where data was exported
+     */
     @Override
     public void showExportSuccess(String path) {
         System.out.println("\n[SUCCESS] Data exported successfully to: " + path);
@@ -209,6 +290,11 @@ public class MainView implements IView {
         scanner.nextLine();
     }
 
+    /**
+     * Displays export error message and waits for user acknowledgment.
+     *
+     * @param error description of the export error
+     */
     @Override
     public void showExportError(String error) {
         System.out.println("\n[ERROR] Export failed: " + error);
@@ -308,10 +394,10 @@ public class MainView implements IView {
      */
     private void renderInfluencerListView() {
         System.out.println("=== Influencer List ===");
-        if (influencers.isEmpty()) {
+        if (currentInfluencers.isEmpty()) {
             System.out.println("No influencers to display.");
         } else {
-            displayInfluencerList(influencers);
+            displayInfluencerList(currentInfluencers);
         }
 
         System.out.println("\nOptions:");
@@ -336,10 +422,10 @@ public class MainView implements IView {
      */
     private void renderFavoritesView() {
         System.out.println("=== Your Favorites ===");
-        if (favorites.isEmpty()) {
+        if (currentFavorites.isEmpty()) {
             System.out.println("No favorites to display.");
         } else {
-            displayInfluencerList(favorites);
+            displayInfluencerList(currentFavorites);
         }
 
         System.out.println("\nOptions:");
@@ -391,7 +477,7 @@ public class MainView implements IView {
             Influencer inf = influencers.get(i);
             System.out.printf("%-3d| %-20s | %-10s | %-15s | %-10d | %-10s",
                     i + 1, inf.getName(), inf.getPlatform(), inf.getCategory(),
-                    inf.getFollowerCount(), inf.getCountry());
+                    inf.getFollowers(), inf.getCountry());
 
             if (shouldShowAdRate()) {
                 System.out.printf(" | $%.2f", inf.getAdRate());
@@ -424,7 +510,7 @@ public class MainView implements IView {
      * @return the current list of influencers
      */
     public List<Influencer> getCurrentInfluencers() {
-        return new ArrayList<>(influencers);
+        return new ArrayList<>(currentInfluencers);
     }
 
     /**
@@ -433,6 +519,6 @@ public class MainView implements IView {
      * @return the current list of favorites
      */
     public List<Influencer> getCurrentFavorites() {
-        return new ArrayList<>(favorites);
+        return new ArrayList<>(currentFavorites);
     }
 }
