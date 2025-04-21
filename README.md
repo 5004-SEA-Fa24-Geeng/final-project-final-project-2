@@ -75,13 +75,6 @@ gradlew.bat build
 gradlew.bat run
 ```
 
-### Running Tests
-
-- To run all tests:
-```bash
-./gradlew test
-```
-
 ### Features
 
 - User registration and login
