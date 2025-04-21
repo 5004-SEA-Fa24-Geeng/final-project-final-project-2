@@ -33,7 +33,7 @@ public class CSVExporter extends AbstractExporter {
             joiner.add(escapeCSV(influencer.getName()));
             joiner.add(escapeCSV(influencer.getPlatform()));
             joiner.add(escapeCSV(influencer.getCategory()));
-            joiner.add(String.valueOf(influencer.getFollowerCount()));
+            joiner.add(String.valueOf(influencer.getFollowers()));
             joiner.add(escapeCSV(influencer.getCountry()));
             joiner.add(String.valueOf(influencer.getAdRate()));
 
