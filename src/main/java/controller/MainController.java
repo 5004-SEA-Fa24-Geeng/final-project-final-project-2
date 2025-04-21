@@ -2,14 +2,27 @@ package controller;
 
 import model.*;
 import view.MainView;
-import view.MainView.ViewState;
+import view.ViewState;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
+/**
+ * Main implementation of the IController interface for the Influencer Management System.
+ * This class serves as the central controller in the MVC architecture, handling all user interactions,
+ * managing data flow between the model and view, and controlling application state.
+ *
+ * <p>The MainController manages user authentication, influencer data operations (search, filter, sort),
+ * favorite management, data import/export, and view transitions.</p>
+ *
+ * <p>It maintains references to the repository, user manager, view, and current user state
+ * to provide a cohesive application experience.</p>
+ */
 public class MainController implements IController {
     private String controllerName;
     private InfluencerRepository repository;
@@ -22,6 +35,12 @@ public class MainController implements IController {
     private List<Influencer> currentWorkingSet;
     private boolean isRunning;
 
+    /**
+     * Creates a new MainController with the specified view.
+     * Initializes all required components and sets up the controller-view relationship.
+     *
+     * @param mainView the main view instance to control
+     */
     public MainController(MainView mainView) {
         this.controllerName = "Main Controller";
         this.mainView = mainView;
@@ -34,6 +53,10 @@ public class MainController implements IController {
         mainView.setController(this);
     }
 
+    /**
+     * Initializes the controller by loading data and setting up the view.
+     * Attempts to load data from the default file path, or loads sample data if file loading fails.
+     */
     @Override
     public void initialize() {
         if (!tryLoadDataFromFile()) {
@@ -43,7 +66,10 @@ public class MainController implements IController {
         mainView.setVisible(true);
     }
 
-
+    /**
+     * Runs the main application loop.
+     * Continuously processes user input until the application is stopped.
+     */
     public void run() {
         isRunning = true;
 
@@ -58,7 +84,12 @@ public class MainController implements IController {
         }
     }
 
-
+    /**
+     * Processes user input based on the current view state.
+     * Delegates to specific state handler methods.
+     *
+     * @param input the user input string
+     */
     private void processInputForCurrentState(String input) {
         Map<String, Object> params = new HashMap<>();
         ViewState currentState = mainView.getCurrentState();
@@ -94,11 +125,19 @@ public class MainController implements IController {
         }
     }
 
-
+    /**
+     * Stops the application.
+     * Sets the running flag to false, which will cause the main loop to exit.
+     */
     public void stop() {
         isRunning = false;
     }
 
+    /**
+     * Attempts to load influencer data from the default data file.
+     *
+     * @return true if data was successfully loaded, false otherwise
+     */
     private boolean tryLoadDataFromFile() {
         String defaultDataPath = "src/main/resources/data/influencers.csv";
         importer = new CSVImporter();
@@ -116,6 +155,14 @@ public class MainController implements IController {
         return false;
     }
 
+    /**
+     * Handles requests from the view with specific actions and parameters.
+     * This is the main entry point for processing user actions, including login, registration,
+     * search, filtering, sorting, and data import/export operations.
+     *
+     * @param action the action to perform (e.g., "login", "search", "filter")
+     * @param params a map of parameters required for the action
+     */
     @Override
     public void handleRequest(String action, Map<String, Object> params) {
         if (params == null) {
@@ -194,10 +241,31 @@ public class MainController implements IController {
             case "export":
                 String exportFormat = (String) params.get("format");
                 String exportPath = (String) params.get("path");
-                List<Influencer> data = params.containsKey("data") ?
-                        (List<Influencer>) params.get("data") :
-                        mainView.getCurrentState() == ViewState.USER_FAVORITES ?
-                                mainView.getCurrentFavorites() : mainView.getCurrentInfluencers();
+                List<Influencer> data;
+
+                // Check if we're exporting favorites
+                if (params.containsKey("exportingFavorites") && (boolean) params.get("exportingFavorites")) {
+                    // Get favorites directly from the controller's userFavorites instance
+                    if (userFavorites == null) {
+                        mainView.showExportError("No favorites to export");
+                        return;
+                    }
+                    data = userFavorites.getAllItems();
+                    System.out.println("[DEBUG] Exporting " + data.size() + " favorites through handleRequest");
+                } else {
+                    // Make sure we have the current working set
+                    if (currentWorkingSet == null || currentWorkingSet.isEmpty()) {
+                        loadAllInfluencers();
+                    }
+                    data = currentWorkingSet;
+                    System.out.println("[DEBUG] Exporting " + data.size() + " influencers through handleRequest");
+                }
+
+                // If data was directly provided, use that instead
+                if (params.containsKey("data")) {
+                    data = (List<Influencer>) params.get("data");
+                    System.out.println("[DEBUG] Using provided data: " + data.size() + " items");
+                }
 
                 handleExport(exportFormat, exportPath, data);
                 break;
@@ -218,7 +286,13 @@ public class MainController implements IController {
         }
     }
 
-
+    /**
+     * Handles user input in the login state.
+     * Processes numeric options for login, registration, or exit.
+     *
+     * @param input the user input string
+     * @param params parameters to store and pass during processing
+     */
     public void handleLoginState(String input, Map<String, Object> params) {
         int option;
         try {
@@ -252,7 +326,13 @@ public class MainController implements IController {
         }
     }
 
-
+    /**
+     * Handles user input in the registration state.
+     * Processes username and password input for creating a new user account.
+     *
+     * @param input the user input string (username)
+     * @param params parameters to store and pass during processing
+     */
     public void handleRegistrationState(String input, Map<String, Object> params) {
         String username = input.trim();
 
@@ -274,7 +354,14 @@ public class MainController implements IController {
         handleRequest("register", params);
     }
 
-
+    /**
+     * Handles user input in the user profile state.
+     * Processes numeric options for subscription management, viewing influencers,
+     * viewing favorites, or logging out.
+     *
+     * @param input the user input string
+     * @param params parameters to store and pass during processing
+     */
     public void handleUserProfileState(String input, Map<String, Object> params) {
         int option;
         try {
@@ -307,7 +394,14 @@ public class MainController implements IController {
         }
     }
 
-
+    /**
+     * Handles user input in the influencer list state.
+     * Processes numeric options for searching, filtering, sorting, managing favorites,
+     * and navigating to other views.
+     *
+     * @param input the user input string
+     * @param params parameters to store and pass during processing
+     */
     public void handleInfluencerListState(String input, Map<String, Object> params) {
         int option;
         try {
@@ -410,7 +504,14 @@ public class MainController implements IController {
         }
     }
 
-
+    /**
+     * Handles user input in the favorites state.
+     * Processes numeric options for searching favorites, removing items from favorites,
+     * exporting favorites, and navigating back to the user profile.
+     *
+     * @param input the user input string
+     * @param params parameters to store and pass during processing
+     */
     public void handleFavoritesState(String input, Map<String, Object> params) {
         int option;
         try {
@@ -442,8 +543,7 @@ public class MainController implements IController {
                 break;
 
             case 3:
-                showExportView();
-                params.put("exportingFavorites", true);
+                exportFavorites();
                 break;
 
             case 4:
@@ -456,7 +556,75 @@ public class MainController implements IController {
         }
     }
 
+    /**
+     * Directly exports the current user's favorites to a file.
+     * This method bypasses the parameter passing and exports favorites using the appropriate format.
+     * Handles format selection, path input, and export operation.
+     */
+    private void exportFavorites() {
+        if (userFavorites == null) {
+            mainView.showExportError("No favorites to export");
+            return;
+        }
 
+        List<Influencer> favorites = userFavorites.getAllItems();
+        if (favorites.isEmpty()) {
+            mainView.showExportError("No favorites to export");
+            return;
+        }
+
+        // Show export format options
+        mainView.showExportView();
+        String option = mainView.getUserInput();
+        int formatOption;
+        try {
+            formatOption = Integer.parseInt(option);
+        } catch (NumberFormatException e) {
+            mainView.showError("Invalid option");
+            return;
+        }
+
+        if (formatOption != 1 && formatOption != 2) {
+            if (formatOption == 3) {
+                showUserFavoritesView();
+            } else {
+                mainView.showError("Invalid option");
+            }
+            return;
+        }
+
+        String format = formatOption == 1 ? "csv" : "json";
+        String defaultPath = "favorites." + format.toLowerCase();
+        String path = mainView.promptForInput("Enter path to save file [" + defaultPath + "]: ");
+        if (path.trim().isEmpty()) {
+            path = defaultPath;
+        }
+
+        // Create exporter and export directly
+        IExporter exporter = getExporterForFormat(format);
+        if (exporter == null) {
+            mainView.showExportError("Unsupported export format: " + format);
+            return;
+        }
+
+        boolean success = exporter.export(favorites, path);
+        if (success) {
+            mainView.showExportSuccess(path);
+        } else {
+            mainView.showExportError("Failed to export data");
+        }
+
+        showUserFavoritesView();
+    }
+
+    /**
+     * Handles the export state of the application.
+     * Processes user input for exporting data in CSV or JSON format.
+     * Manages format selection, path input, and triggering the actual export operation.
+     *
+     * @param input the user input string
+     * @param params parameters for the export operation
+     */
     public void handleExportState(String input, Map<String, Object> params) {
         int option;
         try {
@@ -479,18 +647,36 @@ public class MainController implements IController {
                     path = defaultPath;
                 }
 
-                params.put("format", format);
-                params.put("path", path);
+                // Create a new params map to avoid potential parameter issues
+                Map<String, Object> exportParams = new HashMap<>();
+                exportParams.put("format", format);
+                exportParams.put("path", path);
+                exportParams.put("exportingFavorites", isFavorites);
 
                 if (isFavorites) {
-                    loadAllFavorites();
-                    params.put("data", mainView.getCurrentFavorites());
+                    // Get favorites directly from UserFavorites
+                    if (userFavorites == null) {
+                        mainView.showExportError("No favorites to export");
+                        showUserFavoritesView();
+                        return;
+                    }
+                    List<Influencer> favorites = userFavorites.getAllItems();
+                    if (favorites.isEmpty()) {
+                        mainView.showExportError("No favorites to export");
+                        showUserFavoritesView();
+                        return;
+                    }
+                    exportParams.put("data", favorites);
+                    handleExport(format, path, favorites);
                 } else {
                     loadAllInfluencers();
-                    params.put("data", mainView.getCurrentInfluencers());
+                    List<Influencer> allInfluencers = mainView.getCurrentInfluencers();
+                    exportParams.put("data", allInfluencers);
+                    handleExport(format, path, allInfluencers);
                 }
 
-                handleRequest("export", params);
+                // Don't use handleRequest for export, but call handleExport directly
+                // handleRequest("export", exportParams);
 
                 if (isFavorites) {
                     showUserFavoritesView();
@@ -513,7 +699,14 @@ public class MainController implements IController {
         }
     }
 
-
+    /**
+     * Handles the import state of the application.
+     * Processes user input for importing data from CSV or JSON files.
+     * Manages format selection, path input, and triggering the actual import operation.
+     *
+     * @param input the user input string
+     * @param params parameters for the import operation
+     */
     public void handleImportState(String input, Map<String, Object> params) {
         int option;
         try {
@@ -551,16 +744,36 @@ public class MainController implements IController {
         }
     }
 
+    /**
+     * Gets the name of the controller.
+     *
+     * @return the name of the controller as a string
+     */
     @Override
     public String getControllerName() {
         return controllerName;
     }
 
+    /**
+     * Handles user registration process.
+     * Delegates to the UserManager to register a new user.
+     *
+     * @param user the user object containing registration information
+     * @throws IllegalArgumentException if the user information is invalid or the username already exists
+     */
     @Override
     public void handleUserRegistration(User user) {
         userManager.registerUser(user);
     }
 
+    /**
+     * Handles user login process.
+     * Authenticates the user with the provided credentials and sets the current user if successful.
+     *
+     * @param username the username provided by the user
+     * @param password the password provided by the user
+     * @return the authenticated user object if login is successful, null otherwise
+     */
     @Override
     public User handleUserLogin(String username, String password) {
         User user = userManager.authenticateUser(username, password);
@@ -570,6 +783,10 @@ public class MainController implements IController {
         return user;
     }
 
+    /**
+     * Handles user logout process.
+     * Clears the current user session and returns to the login view.
+     */
     @Override
     public void handleUserLogout() {
         setCurrentUser(null);
@@ -666,12 +883,9 @@ public class MainController implements IController {
     }
 
     private List<Influencer> sortByFollowers(List<Influencer> influencers, boolean ascending) {
-        List<Influencer> sorted = new ArrayList<>(influencers);
-        sorted.sort((a, b) -> {
-            int result = Integer.compare(a.getFollowerCount(), b.getFollowerCount());
-            return ascending ? result : -result;
-        });
-        return sorted;
+        return influencers.stream()
+                .sorted(Comparator.comparingInt(Influencer::getFollowers).reversed())
+                .collect(Collectors.toList());
     }
 
     private List<Influencer> sortByAdRate(List<Influencer> influencers, boolean ascending) {
@@ -731,6 +945,15 @@ public class MainController implements IController {
         }
     }
 
+    /**
+     * Handles exporting influencer data to a file.
+     * Validates the user, creates the appropriate exporter, and performs the export operation.
+     *
+     * @param format the export format (e.g., "csv", "json")
+     * @param path the file path for the export
+     * @param data the list of influencers to export
+     * @throws IllegalStateException if no user is logged in
+     */
     @Override
     public void handleExport(String format, String path, List<Influencer> data) {
         validateUser();
@@ -749,6 +972,14 @@ public class MainController implements IController {
         }
     }
 
+    /**
+     * Handles importing influencer data from a file.
+     * Validates the user, creates the appropriate importer, and performs the import operation.
+     *
+     * @param format the import format (e.g., "csv", "json")
+     * @param path the file path to import from
+     * @throws IllegalStateException if no user is logged in
+     */
     public void handleImport(String format, String path) {
         validateUser();
 
@@ -772,6 +1003,12 @@ public class MainController implements IController {
         }
     }
 
+    /**
+     * Gets an appropriate exporter for the specified format.
+     *
+     * @param format the export format (e.g., "csv", "json")
+     * @return an IExporter implementation for the specified format, or null if unsupported
+     */
     private IExporter getExporterForFormat(String format) {
         switch (format.toLowerCase()) {
             case "csv":
@@ -783,6 +1020,12 @@ public class MainController implements IController {
         }
     }
 
+    /**
+     * Gets an appropriate importer for the specified format.
+     *
+     * @param format the import format (e.g., "csv", "json")
+     * @return an IImporter implementation for the specified format, or null if unsupported
+     */
     private IImporter getImporterForFormat(String format) {
         switch (format.toLowerCase()) {
             case "csv":
@@ -833,17 +1076,28 @@ public class MainController implements IController {
 
         if (user != null) {
             this.userFavorites = new UserFavorites(user);
+            user.setFavorites(userFavorites);
         } else {
             this.userFavorites = null;
         }
     }
 
+    /**
+     * Validates that a user is currently logged in.
+     *
+     * @throws IllegalStateException if no user is logged in
+     */
     private void validateUser() {
         if (currentUser == null) {
             throw new IllegalStateException("No user logged in");
         }
     }
 
+    /**
+     * Validates that the current user has a premium subscription.
+     *
+     * @throws IllegalStateException if no user is logged in or the user doesn't have a premium subscription
+     */
     private void validateSubscription() {
         validateUser();
         if (!currentUser.isSubscribed()) {
@@ -851,22 +1105,27 @@ public class MainController implements IController {
         }
     }
 
+    /**
+     * Updates all views with current user information.
+     */
     private void updateViews() {
         mainView.setCurrentUser(currentUser);
     }
 
+    /**
+     * Loads sample data into the repository.
+     * Used when no data file is available.
+     */
     private void loadSampleData() {
-        // Sample influencers
-        repository.save(new Influencer("John Smith", "Instagram", "Fitness", 500000, "USA", 2500.0));
-        repository.save(new Influencer("Emma Johnson", "YouTube", "Beauty", 2000000, "UK", 5000.0));
-        repository.save(new Influencer("David Lee", "TikTok", "Comedy", 1500000, "Canada", 3000.0));
-        repository.save(new Influencer("Sophia Chen", "Instagram", "Fashion", 800000, "China", 1800.0));
-        repository.save(new Influencer("Michael Brown", "YouTube", "Gaming", 3000000, "USA", 7000.0));
-        repository.save(new Influencer("Olivia Garcia", "TikTok", "Dance", 1200000, "Spain", 2200.0));
-        repository.save(new Influencer("William Kim", "Instagram", "Travel", 600000, "South Korea", 1500.0));
-        repository.save(new Influencer("Emily Martinez", "YouTube", "Cooking", 900000, "Mexico", 2000.0));
-        repository.save(new Influencer("James Wilson", "Twitch", "Gaming", 400000, "Australia", 1200.0));
-        repository.save(new Influencer("Ava Taylor", "Instagram", "Lifestyle", 700000, "USA", 1800.0));
+        // Add some sample influencers
+        repository.save(new Influencer("John Doe", "Instagram", "Fashion", 100000, 1000.0, "USA"));
+        repository.save(new Influencer("Jane Smith", "YouTube", "Beauty", 500000, 2000.0, "UK"));
+        repository.save(new Influencer("Mike Johnson", "TikTok", "Gaming", 200000, 1500.0, "Canada"));
+        repository.save(new Influencer("Sarah Williams", "Instagram", "Travel", 300000, 2500.0, "Australia"));
+        repository.save(new Influencer("David Brown", "YouTube", "Tech", 400000, 3000.0, "USA"));
+        repository.save(new Influencer("Emily Davis", "TikTok", "Food", 150000, 1200.0, "UK"));
+        repository.save(new Influencer("Robert Wilson", "Instagram", "Fitness", 250000, 1800.0, "Canada"));
+        repository.save(new Influencer("Lisa Taylor", "YouTube", "Music", 350000, 2200.0, "Australia"));
 
         try {
             userManager.registerUser(new User("admin", "admin"));
@@ -878,8 +1137,86 @@ public class MainController implements IController {
         }
     }
 
+    /**
+     * Gets the main view associated with this controller.
+     *
+     * @return the main view instance
+     */
     public MainView getMainView() {
         return mainView;
+    }
+
+    /**
+     * Handles search requests for influencers based on provided search parameters.
+     *
+     * @param params a map containing search parameters, must include a "name" key
+     * @return a list of influencers matching the search criteria
+     * @throws IllegalArgumentException if required parameters are missing
+     */
+    public List<Influencer> handleSearchRequest(Map<String, Object> params) {
+        if (params == null || !params.containsKey("name")) {
+            throw new IllegalArgumentException("Search requires a name parameter");
+        }
+
+        String name = (String) params.get("name");
+        return repository.searchByName(name);
+    }
+
+    /**
+     * Handles filter requests for influencers based on provided filter parameters.
+     *
+     * @param params a map containing filter parameters, must include a "filterType" key
+     *              and appropriate value keys based on the filter type
+     * @return a list of influencers matching the filter criteria
+     * @throws IllegalArgumentException if required parameters are missing or invalid
+     */
+    public List<Influencer> handleFilterRequest(Map<String, Object> params) {
+        if (params == null || !params.containsKey("filterType")) {
+            throw new IllegalArgumentException("Filter requires a filterType parameter");
+        }
+
+        String filterType = (String) params.get("filterType");
+        switch (filterType) {
+            case "platform":
+                return repository.filterByPlatform((String) params.get("platform"));
+            case "category":
+                return repository.filterByCategory((String) params.get("category"));
+            case "followers":
+                return repository.filterByFollowerRange(
+                        (Integer) params.get("minFollowers"),
+                        (Integer) params.get("maxFollowers"));
+            case "country":
+                return repository.filterByCountry((String) params.get("country"));
+            default:
+                throw new IllegalArgumentException("Invalid filter type: " + filterType);
+        }
+    }
+
+    /**
+     * Handles sort requests for influencers based on provided sort parameters.
+     *
+     * @param params a map containing sort parameters, must include a "sortType" key
+     * @return a list of influencers sorted according to the specified criteria
+     * @throws IllegalArgumentException if required parameters are missing or invalid
+     */
+    public List<Influencer> handleSortRequest(Map<String, Object> params) {
+        if (params == null || !params.containsKey("sortType")) {
+            throw new IllegalArgumentException("Sort requires a sortType parameter");
+        }
+
+        String sortType = (String) params.get("sortType");
+        boolean ascending = params.containsKey("ascending") ? (Boolean) params.get("ascending") : true;
+
+        switch (sortType) {
+            case "name":
+                return sortByName(currentWorkingSet, ascending);
+            case "followers":
+                return sortByFollowers(currentWorkingSet, ascending);
+            case "adRate":
+                return sortByAdRate(currentWorkingSet, ascending);
+            default:
+                throw new IllegalArgumentException("Invalid sort type: " + sortType);
+        }
     }
 }
 
