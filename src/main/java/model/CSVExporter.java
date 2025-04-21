@@ -11,6 +11,12 @@ public class CSVExporter extends AbstractExporter {
     private static final String CSV_HEADER = "Name,Platform,Category,FollowerCount,Country,AdRate";
     private static final String CSV_DELIMITER = ",";
 
+    /**
+     * Formats the data into CSV format.
+     *
+     * @param data list of influencers to be exported
+     * @return formatted CSV string with header and data rows
+     */
     @Override
     protected String formatData(List<Influencer> data) {
         if (data == null || data.isEmpty()) {

@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * Abstract class for exporters
+ * Concrete exporters need only implement the formatData method
  */
 public abstract class AbstractExporter implements IExporter {
 
