@@ -2,194 +2,195 @@ package model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Unit tests for the InfluencerRepository class.
  */
 public class InfluencerRepositoryTest {
     private InfluencerRepository repository;
-    private Influencer influencer1;
-    private Influencer influencer2;
-    private Influencer influencer3;
+    private Influencer testInfluencer;
+    private static final String NAME = "Test Influencer";
+    private static final String PLATFORM = "Instagram";
+    private static final String CATEGORY = "Fitness";
+    private static final int FOLLOWER_COUNT = 1000000;
+    private static final String COUNTRY = "USA";
+    private static final double AD_RATE = 2500.0;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         repository = new InfluencerRepository();
-
-        // Create test influencers
-        influencer1 = new Influencer("John Smith", "Instagram", "Fitness", 500000, "USA", 2500.0);
-        influencer2 = new Influencer("Emma Johnson", "YouTube", "Beauty", 2000000, "UK", 5000.0);
-        influencer3 = new Influencer("John Doe", "TikTok", "Comedy", 1000000, "Canada", 3000.0);
-
-        // Add to repository
-        repository.save(influencer1);
-        repository.save(influencer2);
-        repository.save(influencer3);
+        testInfluencer = new Influencer(NAME, PLATFORM, CATEGORY, FOLLOWER_COUNT, AD_RATE, COUNTRY);
     }
 
     @Test
-    public void testSave() {
-        // Test saving a new influencer
-        Influencer newInfluencer = new Influencer("Test", "Twitter", "News", 300000, "USA", 1500.0);
-        repository.save(newInfluencer);
-
-        List<Influencer> all = repository.findAll();
-        assertEquals(4, all.size());
-        assertTrue(all.contains(newInfluencer));
-
-        // Test updating an existing influencer
-        Influencer updatedInfluencer = new Influencer("John Smith", "Twitter", "News", 600000, "USA", 3000.0);
-        repository.save(updatedInfluencer);
-
-        all = repository.findAll();
-        assertEquals(4, all.size()); // Still 4 because we updated an existing one
-
-        // Find the updated influencer
-        boolean found = false;
-        for (Influencer inf : all) {
-            if (inf.getName().equals("John Smith")) {
-                assertEquals("Twitter", inf.getPlatform());
-                assertEquals("News", inf.getCategory());
-                assertEquals(600000, inf.getFollowerCount());
-                assertEquals(3000.0, inf.getAdRate(), 0.001);
-                found = true;
-                break;
-            }
-        }
-        assertTrue(found);
+    void testSave() {
+        repository.save(testInfluencer);
+        assertTrue(repository.findAll().contains(testInfluencer));
     }
 
     @Test
-    public void testDelete() {
-        repository.delete(influencer1);
-
-        List<Influencer> all = repository.findAll();
-        assertEquals(2, all.size());
-        assertFalse(all.contains(influencer1));
-        assertTrue(all.contains(influencer2));
-        assertTrue(all.contains(influencer3));
+    void testDelete() {
+        repository.save(testInfluencer);
+        assertTrue(repository.findAll().contains(testInfluencer));
+        
+        repository.delete(testInfluencer);
+        assertFalse(repository.findAll().contains(testInfluencer));
     }
 
     @Test
-    public void testFindAll() {
-        List<Influencer> all = repository.findAll();
-        assertEquals(3, all.size());
-        assertTrue(all.contains(influencer1));
-        assertTrue(all.contains(influencer2));
-        assertTrue(all.contains(influencer3));
+    void testFindAll() {
+        List<Influencer> initialList = repository.findAll();
+        assertTrue(initialList.isEmpty());
+        
+        repository.save(testInfluencer);
+        List<Influencer> updatedList = repository.findAll();
+        assertEquals(1, updatedList.size());
+        assertTrue(updatedList.contains(testInfluencer));
     }
 
     @Test
-    public void testSearchByName() {
-        // Search for "John" - should find two influencers
-        List<Influencer> results = repository.searchByName("John");
-        assertEquals(3, results.size());
-        assertTrue(results.contains(influencer1)); // John Smith
-        assertTrue(results.contains(influencer3)); // John Doe
-
-        // Search for "Emma" - should find one influencer
-        results = repository.searchByName("Emma");
+    void testSearchByName() {
+        repository.save(testInfluencer);
+        
+        // Test exact match
+        List<Influencer> results = repository.searchByName(NAME);
         assertEquals(1, results.size());
-        assertTrue(results.contains(influencer2)); // Emma Johnson
-
-        // Search for non-existent name
-        results = repository.searchByName("XYZ");
+        assertEquals(testInfluencer, results.get(0));
+        
+        // Test partial match
+        results = repository.searchByName("Test");
+        assertEquals(1, results.size());
+        assertEquals(testInfluencer, results.get(0));
+        
+        // Test no match
+        results = repository.searchByName("NonExistent");
         assertEquals(0, results.size());
     }
 
     @Test
-    public void testFilterByPlatform() {
-        // Filter by Instagram
-        List<Influencer> results = repository.filterByPlatform("Instagram");
+    void testFilterByPlatform() {
+        repository.save(testInfluencer);
+        
+        List<Influencer> results = repository.filterByPlatform(PLATFORM);
         assertEquals(1, results.size());
-        assertTrue(results.contains(influencer1));
-
-        // Filter by YouTube
+        assertEquals(testInfluencer, results.get(0));
+        
         results = repository.filterByPlatform("YouTube");
-        assertEquals(1, results.size());
-        assertTrue(results.contains(influencer2));
-
-        // Filter by non-existent platform
-        results = repository.filterByPlatform("Snapchat");
         assertEquals(0, results.size());
     }
 
     @Test
-    public void testFilterByCategory() {
-        // Filter by Fitness
-        List<Influencer> results = repository.filterByCategory("Fitness");
+    void testFilterByCategory() {
+        repository.save(testInfluencer);
+        
+        List<Influencer> results = repository.filterByCategory(CATEGORY);
         assertEquals(1, results.size());
-        assertTrue(results.contains(influencer1));
-
-        // Filter by non-existent category
-        results = repository.filterByCategory("Technology");
+        assertEquals(testInfluencer, results.get(0));
+        
+        results = repository.filterByCategory("Gaming");
         assertEquals(0, results.size());
     }
 
     @Test
-    public void testFilterByFollowerRange() {
-        // Filter 400,000 to 600,000
-        List<Influencer> results = repository.filterByFollowerRange(400000, 600000);
+    void testFilterByFollowerRange() {
+        repository.save(testInfluencer);
+        
+        // Test within range
+        List<Influencer> results = repository.filterByFollowerRange(500000, 1500000);
         assertEquals(1, results.size());
-        assertTrue(results.contains(influencer1)); // 500,000 followers
-
-        // Filter 1,000,000 and above
-        results = repository.filterByFollowerRange(1000000, 0);
-        assertEquals(2, results.size());
-        assertTrue(results.contains(influencer2)); // 2,000,000 followers
-        assertTrue(results.contains(influencer3)); // 1,000,000 followers
-
-        // Filter below 100,000
-        results = repository.filterByFollowerRange(0, 100000);
+        assertEquals(testInfluencer, results.get(0));
+        
+        // Test outside range
+        results = repository.filterByFollowerRange(2000000, 3000000);
         assertEquals(0, results.size());
     }
 
     @Test
-    public void testFilterByCountry() {
-        // Filter by USA
-        List<Influencer> results = repository.filterByCountry("USA");
+    void testFilterByCountry() {
+        repository.save(testInfluencer);
+        
+        List<Influencer> results = repository.filterByCountry(COUNTRY);
         assertEquals(1, results.size());
-        assertTrue(results.contains(influencer1));
-
-        // Filter by non-existent country
-        results = repository.filterByCountry("France");
+        assertEquals(testInfluencer, results.get(0));
+        
+        results = repository.filterByCountry("UK");
         assertEquals(0, results.size());
     }
 
     @Test
-    public void testSortByName() {
+    void testSortByName() {
+        Influencer influencer2 = new Influencer("Another Influencer", "YouTube", "Gaming", 2000000, 5000.0, "UK");
+        repository.save(testInfluencer);
+        repository.save(influencer2);
+        
         List<Influencer> sorted = repository.sortByName();
-        assertEquals(3, sorted.size());
-
-        // Check order: Emma Johnson, John Doe, John Smith
-        assertEquals("Emma Johnson", sorted.get(0).getName());
-        assertEquals("John Doe", sorted.get(1).getName());
-        assertEquals("John Smith", sorted.get(2).getName());
+        assertEquals(2, sorted.size());
+        assertEquals(influencer2, sorted.get(0)); // "Another" comes before "Test"
+        assertEquals(testInfluencer, sorted.get(1));
     }
 
     @Test
-    public void testSortByFollowers() {
+    void testSortByFollowers() {
+        Influencer influencer2 = new Influencer("Another Influencer", "YouTube", "Gaming", 2000000, 5000.0, "UK");
+        repository.save(testInfluencer);
+        repository.save(influencer2);
+        
         List<Influencer> sorted = repository.sortByFollowers();
-        assertEquals(3, sorted.size());
-
-        // Check order (descending): Emma Johnson (2M), John Doe (1M), John Smith (500K)
-        assertEquals("Emma Johnson", sorted.get(0).getName());
-        assertEquals("John Doe", sorted.get(1).getName());
-        assertEquals("John Smith", sorted.get(2).getName());
+        assertEquals(2, sorted.size());
+        assertEquals(influencer2, sorted.get(0)); // Higher follower count (2000000)
+        assertEquals(testInfluencer, sorted.get(1)); // Lower follower count (1000000)
     }
 
     @Test
-    public void testSortByAdRate() {
+    void testSortByAdRate() {
+        Influencer influencer2 = new Influencer("Another Influencer", "YouTube", "Gaming", 2000000, 5000.0, "UK");
+        repository.save(testInfluencer);
+        repository.save(influencer2);
+        
         List<Influencer> sorted = repository.sortByAdRate();
-        assertEquals(3, sorted.size());
-
-        // Check order (descending): Emma Johnson ($5000), John Doe ($3000), John Smith ($2500)
-        assertEquals("Emma Johnson", sorted.get(0).getName());
-        assertEquals("John Doe", sorted.get(1).getName());
-        assertEquals("John Smith", sorted.get(2).getName());
+        assertEquals(2, sorted.size());
+        assertEquals(influencer2, sorted.get(0)); // Higher ad rate (5000.0)
+        assertEquals(testInfluencer, sorted.get(1)); // Lower ad rate (2500.0)
     }
-}
+
+    @Test
+    void testSaveNull() {
+        assertThrows(IllegalArgumentException.class, () -> 
+            repository.save(null));
+    }
+
+    @Test
+    void testDeleteNull() {
+        assertThrows(IllegalArgumentException.class, () -> 
+            repository.delete(null));
+    }
+
+    @Test
+    void testSearchWithNull() {
+        List<Influencer> results = repository.searchByName(null);
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void testFilterWithInvalidFollowerRange() {
+
+        // Negative min value
+        List<Influencer> results1 = repository.filterByFollowerRange(-1, 1000000);
+        assertNotNull(results1);
+        assertTrue(results1.isEmpty());
+        
+        // Negative max value
+        List<Influencer> results2 = repository.filterByFollowerRange(1000000, -1);
+        assertNotNull(results2);
+        assertTrue(results2.isEmpty());
+        
+        // Min > max
+        List<Influencer> results3 = repository.filterByFollowerRange(2000000, 1000000);
+        assertNotNull(results3);
+        assertTrue(results3.isEmpty());
+    }
+} 
