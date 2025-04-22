@@ -151,18 +151,13 @@ public class MainControllerTest {
 
     @Test
     public void testContinuousSearching() {
-        // In MainController, searchByName does NOT call repository.searchByName
-        // Instead it filters the currentWorkingSet, so we'll test that behavior
 
-        // Call method with Smith - only one influencer has Smith in the name
         controller.handleInfluencerSearch("Smith");
 
-        // Create expected result - just John Smith
         List<Influencer> expectedResults = new ArrayList<>();
         expectedResults.add(testInfluencers.get(0)); // John Smith
 
-        // Verify view's displaySearchResults was called with correct results
-        // We use an ArgumentCaptor to capture what was actually passed
+
         ArgumentCaptor<List<Influencer>> resultsCaptor = ArgumentCaptor.forClass(List.class);
         verify(mockView).displaySearchResults(resultsCaptor.capture());
 
@@ -170,7 +165,6 @@ public class MainControllerTest {
         assertEquals(1, capturedResults.size());
         assertEquals("John Smith", capturedResults.get(0).getName());
 
-        // Check if the current working set has been correctly updated
         try {
             java.lang.reflect.Field field = MainController.class.getDeclaredField("currentWorkingSet");
             field.setAccessible(true);
@@ -195,16 +189,12 @@ public class MainControllerTest {
         Map<String, Object> filterParams = new HashMap<>();
         filterParams.put("platform", "Instagram");
 
-        // Apply filtering
         controller.handleInfluencerFilter(filterParams);
 
-        // Verify repository's filterByPlatform was called
         verify(mockRepository).filterByPlatform("Instagram");
 
-        // Verify view's displayInfluencers was called with filter results
         verify(mockView).displayInfluencers(eq(filterResults));
 
-        // Check if the current working set has been correctly updated
         try {
             java.lang.reflect.Field field = MainController.class.getDeclaredField("currentWorkingSet");
             field.setAccessible(true);
@@ -220,28 +210,22 @@ public class MainControllerTest {
 
     @Test
     public void testFilterByFollowerRange() {
-        // Set up mock repository behavior for follower range filter
         List<Influencer> filterResults = new ArrayList<>();
         filterResults.add(testInfluencers.get(1)); // Emma Johnson (2M)
         filterResults.add(testInfluencers.get(2)); // David Lee (1.5M)
         filterResults.add(testInfluencers.get(4)); // Michael Brown (3M)
         when(mockRepository.filterByFollowerRange(1000000, 3000000)).thenReturn(filterResults);
 
-        // Create filter criteria
         Map<String, Object> filterParams = new HashMap<>();
         filterParams.put("minFollowers", 1000000);
         filterParams.put("maxFollowers", 3000000);
 
-        // Apply filtering
         controller.handleInfluencerFilter(filterParams);
 
-        // Verify repository's filterByFollowerRange was called
         verify(mockRepository).filterByFollowerRange(1000000, 3000000);
 
-        // Verify view's displayInfluencers was called with filter results
         verify(mockView).displayInfluencers(eq(filterResults));
 
-        // Check if the current working set has been correctly updated
         try {
             java.lang.reflect.Field field = MainController.class.getDeclaredField("currentWorkingSet");
             field.setAccessible(true);
@@ -258,77 +242,59 @@ public class MainControllerTest {
 
     @Test
     public void testFilterByCategory() {
-        // Set up mock repository behavior for category filter
         List<Influencer> filterResults = new ArrayList<>();
         filterResults.add(testInfluencers.get(1)); // Emma Johnson (Beauty)
         when(mockRepository.filterByCategory("Beauty")).thenReturn(filterResults);
 
-        // Create filter criteria
         Map<String, Object> filterParams = new HashMap<>();
         filterParams.put("category", "Beauty");
 
-        // Apply filtering
         controller.handleInfluencerFilter(filterParams);
 
-        // Verify repository's filterByCategory was called
         verify(mockRepository).filterByCategory("Beauty");
 
-        // Verify view's displayInfluencers was called with filter results
         verify(mockView).displayInfluencers(eq(filterResults));
     }
 
     @Test
     public void testFilterByCountry() {
-        // Set up mock repository behavior for country filter
         List<Influencer> filterResults = new ArrayList<>();
         filterResults.add(testInfluencers.get(0)); // John Smith (USA)
         filterResults.add(testInfluencers.get(4)); // Michael Brown (USA)
         when(mockRepository.filterByCountry("USA")).thenReturn(filterResults);
 
-        // Create filter criteria
         Map<String, Object> filterParams = new HashMap<>();
         filterParams.put("country", "USA");
 
-        // Apply filtering
         controller.handleInfluencerFilter(filterParams);
 
-        // Verify repository's filterByCountry was called
         verify(mockRepository).filterByCountry("USA");
 
-        // Verify view's displayInfluencers was called with filter results
         verify(mockView).displayInfluencers(eq(filterResults));
     }
 
     @Test
     public void testContinuousSorting() {
-        // In MainController, handleInfluencerSort doesn't call repository sort methods
-        // It sorts the currentWorkingSet itself, so we need to test that behavior
 
-        // First sort by name
         controller.handleInfluencerSort("name", true);
 
-        // Expected sorting: David, Emma, John, Michael, Sophia (alphabetical)
         List<Influencer> expectedSorted = new ArrayList<>(testInfluencers);
         expectedSorted.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
 
-        // Capture the results passed to view
         ArgumentCaptor<List<Influencer>> captor = ArgumentCaptor.forClass(List.class);
         verify(mockView).displayInfluencers(captor.capture());
 
         List<Influencer> sortedByName = captor.getValue();
         assertEquals(5, sortedByName.size());
 
-        // Verify first name is alphabetically first (David)
         assertEquals("David Lee", sortedByName.get(0).getName());
 
-        // Check if the current working set has been correctly updated
         try {
             java.lang.reflect.Field field = MainController.class.getDeclaredField("currentWorkingSet");
             field.setAccessible(true);
             List<Influencer> currentWorkingSet = (List<Influencer>) field.get(controller);
 
             assertEquals(5, currentWorkingSet.size());
-            // First should be David when sorted by name
             assertEquals("David Lee", currentWorkingSet.get(0).getName());
         } catch (Exception e) {
             fail("Failed to verify test: " + e.getMessage());
@@ -337,45 +303,34 @@ public class MainControllerTest {
 
     @Test
     public void testSortByFollowers() {
-        // Sort by followers - controller sorts internally, not through repository
         controller.handleInfluencerSort("followers", true);
 
-        // Capture the results passed to view
         ArgumentCaptor<List<Influencer>> captor = ArgumentCaptor.forClass(List.class);
         verify(mockView).displayInfluencers(captor.capture());
 
         List<Influencer> sorted = captor.getValue();
         assertEquals(5, sorted.size());
 
-        // Should be sorted by followers in reverse order (highest first)
-        // So Michael with 3M should be first
+
         assertEquals("Michael Brown", sorted.get(0).getName());
         assertEquals(3000000, sorted.get(0).getFollowers());
     }
 
     @Test
     public void testSortByAdRate() {
-        // Check the implementation of sortByAdRate method
         List<Influencer> testList = new ArrayList<>(testInfluencers);
         try {
-            // Use reflection to call the private sortByAdRate method to understand the actual sorting logic
             java.lang.reflect.Method sortMethod = MainController.class.getDeclaredMethod("sortByAdRate", List.class, boolean.class);
             sortMethod.setAccessible(true);
 
-            // First case: ascending=true
             List<Influencer> sortedAscending = (List<Influencer>) sortMethod.invoke(controller, testList, true);
-            // Sort by adRate in ascending order, Sophia should be the minimum
             assertEquals("Sophia Chen", sortedAscending.get(0).getName()); // Minimum adRate: 1800.0
 
-            // Second case: ascending=false
             List<Influencer> sortedDescending = (List<Influencer>) sortMethod.invoke(controller, testList, false);
-            // Sort by adRate in descending order, Michael should be the maximum
             assertEquals("Michael Brown", sortedDescending.get(0).getName()); // Maximum adRate: 7000.0
 
-            // Call the actual controller method, analyze correctness based on above
             controller.handleInfluencerSort("adRate", false); // Need to set false to get descending order
 
-            // Capture the results
             ArgumentCaptor<List<Influencer>> captor = ArgumentCaptor.forClass(List.class);
             verify(mockView).displayInfluencers(captor.capture());
 
@@ -423,32 +378,24 @@ public class MainControllerTest {
 
     @Test
     public void testHandleExportFailure() {
-        // Create an exporter that always fails
         IExporter failingExporter = mock(IExporter.class);
         when(failingExporter.export(anyList(), anyString())).thenReturn(false);
 
-        // Create a controller dedicated for testing
         TestMainController testController = new TestMainController(mockView, failingExporter);
 
         try {
-            // Set up necessary state
-            // 1. Copy repository
             Field repoField = MainController.class.getDeclaredField("repository");
             repoField.setAccessible(true);
             repoField.set(testController, mockRepository);
 
-            // 2. Copy currentUser
             Field currentUserField = MainController.class.getDeclaredField("currentUser");
             currentUserField.setAccessible(true);
             currentUserField.set(testController, testUser);
 
-            // Call handleExport method
             testController.handleExport("csv", "test_file.csv", testInfluencers);
 
-            // Verify the exporter's export method was called
             verify(failingExporter).export(anyList(), anyString());
 
-            // Verify view.showExportError was called
             verify(mockView).showExportError(anyString());
 
         } catch (Exception e) {
@@ -458,7 +405,6 @@ public class MainControllerTest {
 
     @Test
     public void testHandleLogin() {
-        // Set up mock user manager behavior
         User authenticatedUser = new User("testUser", "password");
         try {
             java.lang.reflect.Field field = User.class.getDeclaredField("username");
@@ -470,7 +416,6 @@ public class MainControllerTest {
 
         when(mockUserManager.authenticateUser("testUser", "password")).thenReturn(authenticatedUser);
 
-        // Clear the current user
         try {
             java.lang.reflect.Field currentUserField = MainController.class.getDeclaredField("currentUser");
             currentUserField.setAccessible(true);
@@ -479,13 +424,10 @@ public class MainControllerTest {
             fail("Failed to set up test: " + e.getMessage());
         }
 
-        // Call handleUserLogin method
         User result = controller.handleUserLogin("testUser", "password");
 
-        // Verify user manager's authenticateUser was called
         verify(mockUserManager).authenticateUser("testUser", "password");
 
-        // Verify current user was set
         try {
             java.lang.reflect.Field currentUserField = MainController.class.getDeclaredField("currentUser");
             currentUserField.setAccessible(true);
@@ -500,48 +442,37 @@ public class MainControllerTest {
 
     @Test
     public void testHandleLoginFailure() {
-        // Set up mock user manager behavior
         when(mockUserManager.authenticateUser("testUser", "wrongPassword")).thenReturn(null);
 
-        // Call handleUserLogin method with wrong password
         User result = controller.handleUserLogin("testUser", "wrongPassword");
 
-        // Verify user manager's authenticateUser was called
         verify(mockUserManager).authenticateUser("testUser", "wrongPassword");
 
-        // Verify result is null
         assertNull(result);
     }
 
     @Test
     public void testHandleRegistration() {
-        // Create a user for registration
         User newUser = new User("newUser", "newPassword");
 
-        // Call handleUserRegistration method
         controller.handleUserRegistration(newUser);
 
-        // Verify user manager's registerUser was called with the user
         verify(mockUserManager).registerUser(newUser);
     }
 
     @Test
     public void testHandleRegistrationFailure() {
-        // Set up mock user manager behavior to throw exception
         User existingUser = new User("existingUser", "password");
         doThrow(new IllegalArgumentException("Username already exists")).when(mockUserManager).registerUser(existingUser);
 
-        // Call handleUserRegistration method and verify exception is thrown
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
                 controller.handleUserRegistration(existingUser));
 
-        // Verify exception message
         assertEquals("Username already exists", exception.getMessage());
     }
 
     @Test
     public void testHandleAddToFavorites() {
-        // The userFavorites is already set up in setUp()
 
         // Call handleAddToFavorites method
         Influencer influencer = testInfluencers.get(0);
@@ -587,13 +518,10 @@ public class MainControllerTest {
 
     @Test
     public void testHandleViewFavorites() {
-        // The userFavorites is already set up in setUp()
 
-        // Set up mock favorites behavior
         List<Influencer> favoritesList = new ArrayList<>();
         favoritesList.add(testInfluencers.get(0));
 
-        // Get the UserFavorites mock from the controller
         UserFavorites userFavoritesMock;
         try {
             java.lang.reflect.Field userFavoritesField = MainController.class.getDeclaredField("userFavorites");
@@ -605,25 +533,19 @@ public class MainControllerTest {
             return;
         }
 
-        // Call loadAllFavorites method
         controller.loadAllFavorites();
 
-        // Verify favorites.getAllItems was called
         verify(userFavoritesMock).getAllItems();
 
-        // Verify view was updated with favorites list
         verify(mockView).displayFavorites(favoritesList);
     }
 
     @Test
     public void testHandleSubscribe() {
-        // Unsubscribe the user first
         testUser.unsubscribe();
 
-        // Call handleSubscription method
         controller.handleSubscription();
 
-        // Verify user is now subscribed
         assertTrue(testUser.isSubscribed());
     }
 
@@ -638,10 +560,8 @@ public class MainControllerTest {
 
     @Test
     public void testHandleLogout() {
-        // Call handleUserLogout method
         controller.handleUserLogout();
 
-        // Verify current user was cleared
         try {
             java.lang.reflect.Field currentUserField = MainController.class.getDeclaredField("currentUser");
             currentUserField.setAccessible(true);
@@ -652,15 +572,12 @@ public class MainControllerTest {
             fail("Failed to verify test: " + e.getMessage());
         }
 
-        // Verify view was updated to login form
         verify(mockView).showLoginForm();
     }
 
     @Test
     public void testImportUpdatesWorkingSet() {
-        // Prepare mock import data
         List<Influencer> mockImportedData = new ArrayList<>();
-        // Add multiple elements to match actual behavior
         mockImportedData.add(new Influencer("New Influencer 1", "Instagram", "Fashion", 1000000, 2000.0, "USA"));
         mockImportedData.add(new Influencer("New Influencer 2", "YouTube", "Gaming", 500000, 1500.0, "Canada"));
         mockImportedData.add(new Influencer("New Influencer 3", "TikTok", "Comedy", 750000, 1800.0, "UK"));
@@ -668,37 +585,28 @@ public class MainControllerTest {
         mockImportedData.add(new Influencer("New Influencer 5", "Instagram", "Food", 400000, 1300.0, "France"));
 
         try {
-            // Create a real CSVImporter and partially mock it using Mockito
             CSVImporter realImporter = new CSVImporter();
             CSVImporter spyImporter = spy(realImporter);
 
-            // Return our mock data when importData method is called
             doReturn(mockImportedData).when(spyImporter).importData(anyString());
 
-            // Save the original importer field value
             java.lang.reflect.Field importerField = MainController.class.getDeclaredField("importer");
             importerField.setAccessible(true);
             Object originalImporter = importerField.get(controller);
 
-            // Set our spy as the importer
             importerField.set(controller, spyImporter);
 
-            // Call import method
             controller.handleImport("csv", "test_file.csv");
 
-            // Verify view update was successful
             verify(mockView).showImportSuccess(contains("influencers imported"));
 
-            // Verify data was saved to repository
             verify(mockRepository, atLeastOnce()).save(any(Influencer.class));
 
-            // Verify currentWorkingSet was updated
             java.lang.reflect.Field workingSetField = MainController.class.getDeclaredField("currentWorkingSet");
             workingSetField.setAccessible(true);
             List<Influencer> currentWorkingSet = (List<Influencer>) workingSetField.get(controller);
             assertEquals(mockImportedData.size(), currentWorkingSet.size());
 
-            // Restore original value
             importerField.set(controller, originalImporter);
 
         } catch (Exception e) {
@@ -708,7 +616,6 @@ public class MainControllerTest {
 
     @Test
     public void testHandleExport() {
-        // Set up mock directly on controller
         try {
             CSVExporter mockCsvExporter = mock(CSVExporter.class);
             when(mockCsvExporter.export(anyList(), anyString())).thenReturn(true);
@@ -721,39 +628,31 @@ public class MainControllerTest {
             return;
         }
 
-        // Call handleExport method
         controller.handleExport("csv", "test_file.csv", testInfluencers);
 
-        // Verify view was updated with success message
         verify(mockView).showExportSuccess(anyString());
     }
 
     @Test
     public void testHandleRequest() {
-        // Reset any previous interactions with the mockView
         reset(mockView);
 
-        // Test search request
         Map<String, Object> searchParams = new HashMap<>();
         searchParams.put("query", "John");
         searchParams.put("name", "John"); // Add required parameter
         controller.handleRequest("search", searchParams);
         verify(mockView).displaySearchResults(anyList());
 
-        // Reset mocks between different test scenarios
         reset(mockView, mockRepository);
 
-        // Test filter request
         Map<String, Object> filterParams = new HashMap<>();
         filterParams.put("platform", "Instagram");
         filterParams.put("filterType", "platform"); // Add required parameter
         controller.handleRequest("filter", filterParams);
         verify(mockRepository).filterByPlatform("Instagram");
 
-        // Reset mocks again
         reset(mockView, mockRepository);
 
-        // Test sort request
         Map<String, Object> sortParams = new HashMap<>();
         sortParams.put("criteria", "name");
         sortParams.put("ascending", true);
@@ -761,15 +660,12 @@ public class MainControllerTest {
         controller.handleRequest("sort", sortParams);
         verify(mockView).displayInfluencers(anyList());
 
-        // Reset mocks again
         reset(mockView, mockRepository);
 
-        // Test addToFavorites request
         Map<String, Object> favParams = new HashMap<>();
         Influencer influencer = testInfluencers.get(0);
         favParams.put("influencer", influencer);
 
-        // Get the UserFavorites mock and reset it
         UserFavorites userFavoritesMock;
         try {
             Field userFavoritesField = MainController.class.getDeclaredField("userFavorites");
@@ -786,26 +682,20 @@ public class MainControllerTest {
 
     @Test
     public void testInitialize() {
-        // Create a fresh controller for this test
         MainController testController = new MainController(mockView);
 
-        // Mock the repository behavior inside this controller
         try {
-            // First, get the repository field
             Field repoField = MainController.class.getDeclaredField("repository");
             repoField.setAccessible(true);
             repoField.set(testController, mockRepository);
 
-            // Set up behavior for findAll
             when(mockRepository.findAll()).thenReturn(testInfluencers);
         } catch (Exception e) {
             fail("Failed to set up repository: " + e.getMessage());
         }
 
-        // Call initialize
         testController.initialize();
 
-        // Verify view was set to visible
         verify(mockView).setVisible(true);
     }
 
@@ -955,46 +845,36 @@ public class MainControllerTest {
 
     private void testProcessInputUserProfileState() {
         try {
-            // Get access to the private method
             Method processMethod = MainController.class.getDeclaredMethod(
                     "processInputForCurrentState", String.class);
             processMethod.setAccessible(true);
 
             // First test option 1: Access Influencer List
 
-            // Reset mocks
             reset(mockView);
 
-            // Set up a spy controller to verify handleRequest calls
             MainController spyController = spy(controller);
 
-            // Set the mock view on the spy controller
             Field viewField = MainController.class.getDeclaredField("mainView");
             viewField.setAccessible(true);
             viewField.set(spyController, mockView);
 
-            // Set the current state to USER_PROFILE
             when(mockView.getCurrentState()).thenReturn(ViewState.USER_PROFILE);
 
-            // Call the method with option "1" (Access Influencer List)
             processMethod.invoke(spyController, "1");
 
-            // Verify correct methods were called in sequence
             verify(spyController).handleUserProfileState(eq("1"), anyMap());
             verify(spyController).handleRequest(eq("subscribe"), anyMap());
 
             // Test option 2: View Favorites
 
-            // Reset mocks and spy
             reset(mockView);
             spyController = spy(controller);
             viewField.set(spyController, mockView);
             when(mockView.getCurrentState()).thenReturn(ViewState.USER_PROFILE);
 
-            // Call the method with option "2" (View Favorites)
             processMethod.invoke(spyController, "2");
 
-            // Verify correct methods were called
             verify(spyController).handleUserProfileState(eq("2"), anyMap());
 
             // Test option 3: Subscribe
@@ -1006,7 +886,6 @@ public class MainControllerTest {
             // Call the method with option "3"
             processMethod.invoke(spyController, "3");
 
-            // Verify correct methods were called
             verify(spyController).handleUserProfileState(eq("3"), anyMap());
 
             // Test option 4: Unsubscribe
@@ -1015,10 +894,8 @@ public class MainControllerTest {
             viewField.set(spyController, mockView);
             when(mockView.getCurrentState()).thenReturn(ViewState.USER_PROFILE);
 
-            // Call the method with option "4"
             processMethod.invoke(spyController, "4");
 
-            // Verify correct methods were called
             verify(spyController).handleUserProfileState(eq("4"), anyMap());
 
             // Test option 5: Logout
@@ -1027,10 +904,8 @@ public class MainControllerTest {
             viewField.set(spyController, mockView);
             when(mockView.getCurrentState()).thenReturn(ViewState.USER_PROFILE);
 
-            // Call the method with option "5" (Logout)
             processMethod.invoke(spyController, "5");
 
-            // Verify correct methods were called
             verify(spyController).handleUserProfileState(eq("5"), anyMap());
 
             // Test option 6: Exit
@@ -1039,19 +914,15 @@ public class MainControllerTest {
             viewField.set(spyController, mockView);
             when(mockView.getCurrentState()).thenReturn(ViewState.USER_PROFILE);
 
-            // Call the method with option "6" (Exit)
             processMethod.invoke(spyController, "6");
 
-            // Verify correct methods were called
             verify(spyController).handleUserProfileState(eq("6"), anyMap());
 
-            // Check if the controller's isRunning flag was set to false
             Field isRunningField = MainController.class.getDeclaredField("isRunning");
             isRunningField.setAccessible(true);
             boolean isRunning = (boolean) isRunningField.get(controller);
             assertFalse(isRunning);
 
-            // Reset isRunning for other tests
             isRunningField.set(controller, true);
 
         } catch (Exception e) {
@@ -1062,32 +933,24 @@ public class MainControllerTest {
 
     private void testProcessInputInfluencerListState() {
         try {
-            // Get access to the private method
             Method processMethod = MainController.class.getDeclaredMethod(
                     "processInputForCurrentState", String.class);
             processMethod.setAccessible(true);
 
-            // Reset mocks
             reset(mockView, mockRepository);
 
-            // Set the current state to INFLUENCER_LIST
             when(mockView.getCurrentState()).thenReturn(ViewState.INFLUENCER_LIST);
 
-            // Create a spy controller
             MainController spyController = spy(controller);
 
-            // Setup mock view on spy controller
             Field viewField = MainController.class.getDeclaredField("mainView");
             viewField.setAccessible(true);
             viewField.set(spyController, mockView);
 
-            // Mock handleInfluencerListState to avoid executing it
             doNothing().when(spyController).handleRequest(anyString(), anyMap());
 
-            // Call processInputForCurrentState
             processMethod.invoke(spyController, "1");
 
-            // Just verify the right state was checked
             verify(mockView).getCurrentState();
         } catch (Exception e) {
             fail("Influencer list state test failed: " + e.getMessage() + "\n" +
@@ -1097,32 +960,24 @@ public class MainControllerTest {
 
     private void testProcessInputFavoritesState() {
         try {
-            // Get access to the private method
             Method processMethod = MainController.class.getDeclaredMethod(
                     "processInputForCurrentState", String.class);
             processMethod.setAccessible(true);
 
-            // Reset mocks
             reset(mockView);
 
-            // Set the current state to USER_FAVORITES
             when(mockView.getCurrentState()).thenReturn(ViewState.USER_FAVORITES);
 
-            // Create a spy controller
             MainController spyController = spy(controller);
 
-            // Setup mock view on spy controller
             Field viewField = MainController.class.getDeclaredField("mainView");
             viewField.setAccessible(true);
             viewField.set(spyController, mockView);
 
-            // Mock handleFavoritesState to avoid executing it
             doNothing().when(spyController).handleRequest(anyString(), anyMap());
 
-            // Call processInputForCurrentState
             processMethod.invoke(spyController, "1");
 
-            // Just verify the right state was checked
             verify(mockView).getCurrentState();
         } catch (Exception e) {
             fail("Favorites state test failed: " + e.getMessage() + "\n" +
@@ -1132,71 +987,52 @@ public class MainControllerTest {
 
     private void testProcessInputExportState() {
         try {
-            // Get access to the private method
             Method processMethod = MainController.class.getDeclaredMethod(
                     "processInputForCurrentState", String.class);
             processMethod.setAccessible(true);
 
-            // Reset mocks
             reset(mockView);
 
-            // Create a spy controller
             MainController spyController = spy(controller);
 
-            // Setup mock view on spy controller
             Field viewField = MainController.class.getDeclaredField("mainView");
             viewField.setAccessible(true);
             viewField.set(spyController, mockView);
 
-            // Set the current state to EXPORT
             when(mockView.getCurrentState()).thenReturn(ViewState.EXPORT);
 
-            // Set up current working set
             List<Influencer> testInfluencerList = new ArrayList<>(testInfluencers);
             when(mockView.getCurrentInfluencers()).thenReturn(testInfluencerList);
 
-            // Mock the promptForInput method to return valid values
             when(mockView.promptForInput(contains("format"))).thenReturn("csv");
             when(mockView.promptForInput(contains("path"))).thenReturn("test.csv");
 
-            // Call the method with option "1" (Export current list)
             processMethod.invoke(spyController, "1");
 
-            // Verify handleExportState was called
             verify(spyController).handleExportState(eq("1"), anyMap());
 
-            // Reset mocks for next test
             reset(mockView);
 
-            // Set up new spy controller
             spyController = spy(controller);
             viewField.set(spyController, mockView);
 
-            // Set the current state and mock inputs again
             when(mockView.getCurrentState()).thenReturn(ViewState.EXPORT);
             when(mockView.promptForInput(contains("format"))).thenReturn("json");
             when(mockView.promptForInput(contains("path"))).thenReturn("test.json");
 
-            // Call the method with option "2" (Export favorites)
             processMethod.invoke(spyController, "2");
 
-            // Verify handleExportState was called
             verify(spyController).handleExportState(eq("2"), anyMap());
 
-            // Reset mocks for next test
             reset(mockView);
 
-            // Set up new spy controller
             spyController = spy(controller);
             viewField.set(spyController, mockView);
 
-            // Set the current state
             when(mockView.getCurrentState()).thenReturn(ViewState.EXPORT);
 
-            // Call the method with option "3" (Back to user profile)
             processMethod.invoke(spyController, "3");
 
-            // Verify handleExportState was called
             verify(spyController).handleExportState(eq("3"), anyMap());
 
         } catch (Exception e) {
@@ -1212,45 +1048,35 @@ public class MainControllerTest {
                     "processInputForCurrentState", String.class);
             processMethod.setAccessible(true);
 
-            // Reset mocks
             reset(mockView, mockRepository, mockImporter);
 
-            // Create a spy controller
             MainController spyController = spy(controller);
 
-            // Setup mock view on spy controller
             Field viewField = MainController.class.getDeclaredField("mainView");
             viewField.setAccessible(true);
             viewField.set(spyController, mockView);
 
-            // Setup mock repository
             Field repoField = MainController.class.getDeclaredField("repository");
             repoField.setAccessible(true);
             repoField.set(spyController, mockRepository);
 
-            // Setup mock importer
             Field importerField = MainController.class.getDeclaredField("importer");
             importerField.setAccessible(true);
             importerField.set(spyController, mockImporter);
 
-            // Set the current state to IMPORT
             when(mockView.getCurrentState()).thenReturn(ViewState.IMPORT);
 
-            // Set up mock behavior for importer
             List<Influencer> importedList = new ArrayList<>(testInfluencers);
             when(mockImporter.importData(anyString())).thenReturn(importedList);
 
-            // Mock user input for format and path
             when(mockView.getUserInput()).thenReturn("1"); // CSV format
             when(mockView.promptForInput(contains("path"))).thenReturn("test.csv");
 
             // Call the method with option "1" (Import CSV)
             processMethod.invoke(spyController, "1");
 
-            // Verify handleImportState was called with the correct parameters
             verify(spyController).handleImportState(eq("1"), anyMap());
 
-            // Reset mocks for next test
             reset(mockView, mockImporter);
 
             // Setup again for option 2
@@ -1258,36 +1084,28 @@ public class MainControllerTest {
             viewField.set(spyController, mockView);
             importerField.set(spyController, mockImporter);
 
-            // Set the current state to IMPORT
             when(mockView.getCurrentState()).thenReturn(ViewState.IMPORT);
 
-            // Mock user input for format and path
             when(mockView.getUserInput()).thenReturn("2"); // JSON format
             when(mockView.promptForInput(contains("path"))).thenReturn("test.json");
 
             // Set up mock behavior for importer
             when(mockImporter.importData(anyString())).thenReturn(importedList);
 
-            // Call the method with option "2" (Import JSON)
             processMethod.invoke(spyController, "2");
 
-            // Verify handleImportState was called with the correct parameters
             verify(spyController).handleImportState(eq("2"), anyMap());
 
-            // Reset mocks for next test
             reset(mockView);
 
             // Setup again for option 3
             spyController = spy(controller);
             viewField.set(spyController, mockView);
 
-            // Set the current state to IMPORT
             when(mockView.getCurrentState()).thenReturn(ViewState.IMPORT);
 
-            // Call the method with option "3" (Back to user profile)
             processMethod.invoke(spyController, "3");
 
-            // Verify handleImportState was called with the correct parameters
             verify(spyController).handleImportState(eq("3"), anyMap());
 
         } catch (Exception e) {
@@ -1318,7 +1136,6 @@ public class MainControllerTest {
                 processMethod.invoke(localController, "1");
                 fail("Should throw exception");
             } catch (Exception e) {
-                // Expected behavior - exception thrown
                 assertTrue(e.getCause() instanceof RuntimeException);
                 assertEquals("Test exception", e.getCause().getMessage());
             }
@@ -1333,10 +1150,8 @@ public class MainControllerTest {
     public void testLoadAllInfluencers() {
         controller.loadAllInfluencers();
 
-        // Verify repository's findAll was called
         verify(mockRepository).findAll();
 
-        // Verify view's displayInfluencers was called with test influencers
         verify(mockView).displayInfluencers(testInfluencers);
     }
 
@@ -1348,7 +1163,6 @@ public class MainControllerTest {
         // Verify view was updated with the new user
         verify(mockView).setCurrentUser(newUser);
 
-        // Verify current user was set inside controller
         try {
             Field currentUserField = MainController.class.getDeclaredField("currentUser");
             currentUserField.setAccessible(true);
@@ -1391,11 +1205,9 @@ public class MainControllerTest {
         // Restore original user
         currentUserField.set(controller, originalUser);
 
-        // Get the validateSubscription method
         Method validateSubMethod = MainController.class.getDeclaredMethod("validateSubscription");
         validateSubMethod.setAccessible(true);
 
-        // Make user unsubscribed and verify exception
         testUser.unsubscribe();
 
         exception = assertThrows(Exception.class, () ->
@@ -1403,7 +1215,6 @@ public class MainControllerTest {
 
         assertTrue(exception.getCause() instanceof IllegalStateException);
 
-        // Restore subscription
         testUser.subscribe();
     }
 
@@ -1413,21 +1224,16 @@ public class MainControllerTest {
         MainController testController = new MainController(mockView) {
             @Override
             public void handleExport(String format, String path, List<Influencer> data) {
-                // Simply log the call, don't perform actual operations
                 System.out.println("handleExport called with format=" + format + ", path=" + path);
-                // Call view's showExportSuccess method to simulate successful export
                 getMainView().showExportSuccess(path);
             }
         };
 
-        // Copy necessary properties
         try {
-            // Set controller state
             Field currentUserField = MainController.class.getDeclaredField("currentUser");
             currentUserField.setAccessible(true);
             currentUserField.set(testController, testUser);
 
-            // Set current working set
             Field workingSetField = MainController.class.getDeclaredField("currentWorkingSet");
             workingSetField.setAccessible(true);
             workingSetField.set(testController, testInfluencers);
@@ -1435,19 +1241,16 @@ public class MainControllerTest {
             fail("Failed to set up test controller: " + e.getMessage());
         }
 
-        // Setup mock view behavior
         when(mockView.getUserInput()).thenReturn("1"); // Choose CSV
         when(mockView.promptForInput(contains("path"))).thenReturn("test.csv");
         when(mockView.getCurrentInfluencers()).thenReturn(testInfluencers);
 
-        // Call handleExportState method
         Method handleExportMethod = MainController.class.getDeclaredMethod("handleExportState", String.class, Map.class);
         handleExportMethod.setAccessible(true);
 
         Map<String, Object> params = new HashMap<>();
         handleExportMethod.invoke(testController, "1", params);
 
-        // Verify view's showExportSuccess was called
         verify(mockView).showExportSuccess(anyString());
     }
 
@@ -1457,25 +1260,19 @@ public class MainControllerTest {
         MainController testController = new MainController(mockView) {
             @Override
             public void handleExport(String format, String path, List<Influencer> data) {
-                // Simply log the call, don't perform actual operations
                 System.out.println("handleExport called with format=" + format + ", path=" + path);
-                // Call view's showExportSuccess method to simulate successful export
                 getMainView().showExportSuccess(path);
             }
         };
 
-        // Setup UserFavorites
         UserFavorites mockFavorites = mock(UserFavorites.class);
         when(mockFavorites.getAllItems()).thenReturn(testInfluencers);
 
-        // Copy necessary properties
         try {
-            // Set controller state
             Field currentUserField = MainController.class.getDeclaredField("currentUser");
             currentUserField.setAccessible(true);
             currentUserField.set(testController, testUser);
 
-            // Set userFavorites
             Field userFavoritesField = MainController.class.getDeclaredField("userFavorites");
             userFavoritesField.setAccessible(true);
             userFavoritesField.set(testController, mockFavorites);
@@ -1483,26 +1280,21 @@ public class MainControllerTest {
             fail("Failed to set up test controller: " + e.getMessage());
         }
 
-        // Setup mock view behavior
         when(mockView.getUserInput()).thenReturn("1"); // Choose CSV
         when(mockView.promptForInput(contains("path"))).thenReturn("favorites.csv");
 
-        // Call exportFavorites method
         Method exportFavoritesMethod = MainController.class.getDeclaredMethod("exportFavorites");
         exportFavoritesMethod.setAccessible(true);
         exportFavoritesMethod.invoke(testController);
 
-        // Verify view's showExportSuccess was called
         verify(mockView).showExportSuccess(anyString());
     }
 
     @Test
     public void testHandleImportState() throws Exception {
-        // Setup the mock view to simulate user interaction
         when(mockView.getUserInput()).thenReturn("1"); // Choose CSV
         when(mockView.promptForInput(contains("path"))).thenReturn("test.csv");
 
-        // Create a controller subclass that overrides handleImport method for testing handleImportState
         MainController testController = new MainController(mockView) {
             @Override
             public void handleImport(String format, String path) {
@@ -1511,9 +1303,7 @@ public class MainControllerTest {
             }
         };
 
-        // Copy necessary properties
         try {
-            // Set controller state
             Field currentUserField = MainController.class.getDeclaredField("currentUser");
             currentUserField.setAccessible(true);
             currentUserField.set(testController, testUser);
@@ -1521,15 +1311,11 @@ public class MainControllerTest {
             fail("Failed to set up test controller: " + e.getMessage());
         }
 
-        // Directly call handleImportState method
         Method handleImportMethod = MainController.class.getDeclaredMethod("handleImportState", String.class, Map.class);
         handleImportMethod.setAccessible(true);
 
         Map<String, Object> params = new HashMap<>();
         handleImportMethod.invoke(testController, "1", params);
-
-        // Since we've overridden the handleImport method, we don't need to verify specific calls
-        // Test passes if execution reaches the handleImport method successfully
     }
 
     @Test
@@ -1540,63 +1326,50 @@ public class MainControllerTest {
             Field workingSetField = MainController.class.getDeclaredField("currentWorkingSet");
             workingSetField.setAccessible(true);
 
-            // Set a fresh working set containing all test data
             List<Influencer> freshWorkingSet = new ArrayList<>(testInfluencers);
             workingSetField.set(controller, freshWorkingSet);
 
-            // Setup repository mock response for searchByName
             when(mockRepository.searchByName("Smith")).thenReturn(Arrays.asList(testInfluencers.get(0)));
         } catch (Exception e) {
             fail("Failed to setup working set: " + e.getMessage());
         }
 
-        // Setup search parameters
         Map<String, Object> params = new HashMap<>();
         params.put("name", "Smith"); // Use correct parameter name "name" instead of query
 
-        // Call handleSearchRequest
         List<Influencer> results = controller.handleSearchRequest(params);
 
-        // Verify repository was called with correct search term
         verify(mockRepository).searchByName("Smith");
 
-        // Verify results
         assertEquals(1, results.size());
         assertEquals("John Smith", results.get(0).getName());
     }
 
     @Test
     public void testHandleFilterRequest() {
-        // Setup filter parameters
         Map<String, Object> params = new HashMap<>();
         params.put("platform", "Instagram");
         params.put("filterType", "platform"); // Add required filterType parameter
 
-        // Setup repository mock
         List<Influencer> expectedResults = new ArrayList<>();
         expectedResults.add(testInfluencers.get(0)); // John Smith
         when(mockRepository.filterByPlatform("Instagram")).thenReturn(expectedResults);
 
-        // Call handleFilterRequest
         List<Influencer> results = controller.handleFilterRequest(params);
 
-        // Verify results
         assertEquals(expectedResults.size(), results.size());
         assertTrue(results.contains(expectedResults.get(0)));
     }
 
     @Test
     public void testHandleSortRequest() {
-        // Setup sort parameters
         Map<String, Object> params = new HashMap<>();
         params.put("criteria", "name");
         params.put("ascending", true);
         params.put("sortType", "name");
 
-        // Call handleSortRequest
         List<Influencer> sorted = controller.handleSortRequest(params);
 
-        // Verify results are sorted by name
         assertEquals(5, sorted.size());
         assertEquals("David Lee", sorted.get(0).getName()); // First alphabetically
     }
@@ -1605,10 +1378,8 @@ public class MainControllerTest {
     public void testHandleInfluencerListState() {
         // Test methods related to influencer list state without calling private methods
 
-        // Reset mocks to clear previous interactions
         reset(mockView, mockRepository);
 
-        // Set up current working set
         try {
             Field workingSetField = MainController.class.getDeclaredField("currentWorkingSet");
             workingSetField.setAccessible(true);
@@ -1620,7 +1391,6 @@ public class MainControllerTest {
         // 1. Test add to favorites
         controller.handleAddToFavorites(testInfluencers.get(0));
 
-        // Get UserFavorites object and verify
         try {
             Field userFavoritesField = MainController.class.getDeclaredField("userFavorites");
             userFavoritesField.setAccessible(true);
@@ -1631,15 +1401,12 @@ public class MainControllerTest {
         }
 
         // 2. Test search by name
-        // Set up mock behavior
         when(mockRepository.searchByName("John")).thenReturn(Arrays.asList(testInfluencers.get(0)));
 
-        // Call search method
         Map<String, Object> searchParams = new HashMap<>();
         searchParams.put("name", "John");
         List<Influencer> results = controller.handleSearchRequest(searchParams);
 
-        // Verify results
         assertEquals(1, results.size());
         assertEquals("John Smith", results.get(0).getName());
 
@@ -1667,7 +1434,6 @@ public class MainControllerTest {
         controller.showInfluencerListView();
         verify(mockView).showInfluencerListView();
 
-        // Reset repository mock to verify exact call count
         reset(mockRepository);
 
         // 6. Test reset working set
@@ -1679,15 +1445,12 @@ public class MainControllerTest {
     public void testHandleFavoritesState() {
         // Test methods related to favorites state without calling private methods
 
-        // Reset mocks to clear previous interactions
         reset(mockView, mockRepository);
 
-        // Set up favorites list
         List<Influencer> favoritesList = new ArrayList<>();
         favoritesList.add(testInfluencers.get(0)); // John Smith
         favoritesList.add(testInfluencers.get(1)); // Emma Johnson
 
-        // Get UserFavorites object and set behavior
         UserFavorites userFavoritesMock;
         try {
             Field userFavoritesField = MainController.class.getDeclaredField("userFavorites");
@@ -1711,7 +1474,6 @@ public class MainControllerTest {
         controller.loadAllFavorites();
         verify(mockView, times(1)).displayFavorites(favoritesList);
 
-        // Reset mocks
         reset(mockView);
 
         // 3. Test show favorites view
@@ -1753,24 +1515,19 @@ public class MainControllerTest {
 
     @Test
     public void testHandleImportWithInvalidFormat() {
-        // Create a test controller that throws an exception for invalid format
         MainController testController = spy(controller);
         doThrow(new IllegalArgumentException("Invalid format: invalid_format"))
                 .when(testController).handleImport("invalid_format", "test_file.txt");
 
-        // Test with invalid format and expect exception
         Exception exception = assertThrows(IllegalArgumentException.class, () ->
                 testController.handleImport("invalid_format", "test_file.txt"));
 
-        // Verify exception message contains "format"
         assertTrue(exception.getMessage().toLowerCase().contains("format"));
     }
 
     @Test
     public void testHandleSearchWithEmptyQuery() {
-        // First reset the working set with all test influencers
         try {
-            // Directly set the currentWorkingSet using reflection
             Field workingSetField = MainController.class.getDeclaredField("currentWorkingSet");
             workingSetField.setAccessible(true);
             workingSetField.set(controller, new ArrayList<>(testInfluencers));
@@ -1778,20 +1535,15 @@ public class MainControllerTest {
             fail("Failed to setup working set: " + e.getMessage());
         }
 
-        // Setup mock behavior for repository
         when(mockRepository.searchByName("")).thenReturn(testInfluencers);
 
-        // Setup search parameters with empty query
         Map<String, Object> params = new HashMap<>();
         params.put("name", "");
 
-        // Call handleSearchRequest with empty query
         List<Influencer> results = controller.handleSearchRequest(params);
 
-        // Verify repository.searchByName was called with empty string
         verify(mockRepository).searchByName("");
 
-        // Empty query should return all influencers
         assertEquals(5, results.size());
     }
 
@@ -1803,7 +1555,6 @@ public class MainControllerTest {
         params.put("ascending", true);
         params.put("sortType", "name"); // Use a valid sortType
 
-        // Get the current working set for comparison
         List<Influencer> originalList = new ArrayList<>();
         try {
             Field workingSetField = MainController.class.getDeclaredField("currentWorkingSet");
@@ -1813,32 +1564,26 @@ public class MainControllerTest {
             fail("Failed to get working set: " + e.getMessage());
         }
 
-        // Call handleSortRequest with invalid criteria but valid sortType
         List<Influencer> sorted = controller.handleSortRequest(params);
 
-        // Should still sort by name even if criteria is invalid
         assertNotNull(sorted);
         assertEquals(originalList.size(), sorted.size());
     }
 
     @Test
     public void testFilterByMultipleCriteria() {
-        // Setup mock repository to handle multiple filter criteria
         List<Influencer> usaInfluencers = Arrays.asList(testInfluencers.get(0), testInfluencers.get(4)); // John and Michael from USA
         List<Influencer> fitnessInfluencers = Arrays.asList(testInfluencers.get(0)); // John Smith - Fitness
 
         when(mockRepository.filterByCountry("USA")).thenReturn(usaInfluencers);
         when(mockRepository.filterByCategory("Fitness")).thenReturn(fitnessInfluencers);
 
-        // Create filter criteria for country first
         Map<String, Object> countryFilter = new HashMap<>();
         countryFilter.put("country", "USA");
         countryFilter.put("filterType", "country");
 
-        // Apply country filter
         controller.handleInfluencerFilter(countryFilter);
 
-        // Create filter criteria for category
         Map<String, Object> categoryFilter = new HashMap<>();
         categoryFilter.put("category", "Fitness");
         categoryFilter.put("filterType", "category");
@@ -1861,15 +1606,12 @@ public class MainControllerTest {
 
     @Test
     public void testHandleUserLoginWithEmptyCredentials() {
-        // Test with empty username
         User result1 = controller.handleUserLogin("", "password");
         assertNull(result1);
 
-        // Test with empty password
         User result2 = controller.handleUserLogin("username", "");
         assertNull(result2);
 
-        // Test with both empty
         User result3 = controller.handleUserLogin("", "");
         assertNull(result3);
     }
@@ -1881,7 +1623,6 @@ public class MainControllerTest {
                 "handleInfluencerListState", String.class, Map.class);
         handleInfluencerListStateMethod.setAccessible(true);
 
-        // Test each case individually
         testInfluencerListCase1(handleInfluencerListStateMethod);
         testInfluencerListCase2to5(handleInfluencerListStateMethod, 2, "platform", "Instagram");
         testInfluencerListCase2to5(handleInfluencerListStateMethod, 3, "category", "Fitness");
@@ -1900,10 +1641,8 @@ public class MainControllerTest {
     }
 
     private void initTestEnvironment() {
-        // Reset all mocks
         reset(mockView, mockRepository);
 
-        // Set up currentWorkingSet
         try {
             Field workingSetField = MainController.class.getDeclaredField("currentWorkingSet");
             workingSetField.setAccessible(true);
@@ -1912,7 +1651,6 @@ public class MainControllerTest {
             fail("Failed to set working set: " + e.getMessage());
         }
 
-        // Set up view to return test data
         when(mockView.getCurrentInfluencers()).thenReturn(testInfluencers);
     }
 
@@ -1920,23 +1658,17 @@ public class MainControllerTest {
     private void testInfluencerListCase1(Method method) throws Exception {
         initTestEnvironment();
 
-        // Set up mock behavior
         when(mockView.promptForInput(contains("name"))).thenReturn("John");
 
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with option "1"
         method.invoke(controller, "1", params);
 
-        // Verify proper methods were called
         verify(mockView).promptForInput(contains("name"));
 
-        // Verify the params were updated with the query
         assertTrue(params.containsKey("query"));
         assertEquals("John", params.get("query"));
 
-        // Verify view was refreshed
         verify(mockView).showInfluencerListView();
     }
 
@@ -1944,10 +1676,8 @@ public class MainControllerTest {
     private void testInfluencerListCase2to5(Method method, int option, String filterType, String value) throws Exception {
         initTestEnvironment();
 
-        // Set up mock behavior
         when(mockView.promptForInput(contains(filterType))).thenReturn(value);
 
-        // Set up expected repository method and result
         List<Influencer> filteredList = new ArrayList<>();
         filteredList.add(testInfluencers.get(0));
 
@@ -1963,16 +1693,12 @@ public class MainControllerTest {
                 break;
         }
 
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with specified option
         method.invoke(controller, String.valueOf(option), params);
 
-        // Verify proper methods were called
         verify(mockView).promptForInput(contains(filterType));
 
-        // Verify the correct repository method was called
         switch (filterType) {
             case "platform":
                 verify(mockRepository).filterByPlatform(value);
@@ -1990,20 +1716,16 @@ public class MainControllerTest {
     private void testInfluencerListCase4_FollowerRange(Method method) throws Exception {
         initTestEnvironment();
 
-        // Set up mock behavior
         when(mockView.promptForInput(contains("minimum"))).thenReturn("100000");
         when(mockView.promptForInput(contains("maximum"))).thenReturn("1000000");
 
         List<Influencer> filteredList = Arrays.asList(testInfluencers.get(0), testInfluencers.get(3));
         when(mockRepository.filterByFollowerRange(100000, 1000000)).thenReturn(filteredList);
 
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with option "4"
         method.invoke(controller, "4", params);
 
-        // Verify proper methods were called
         verify(mockView).promptForInput(contains("minimum"));
         verify(mockView).promptForInput(contains("maximum"));
         verify(mockRepository).filterByFollowerRange(100000, 1000000);
@@ -2013,16 +1735,12 @@ public class MainControllerTest {
     private void testInfluencerListCase6to8(Method method, int option, String criteria, boolean ascending) throws Exception {
         initTestEnvironment();
 
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with specified option
         method.invoke(controller, String.valueOf(option), params);
 
-        // Verify message was displayed
         verify(mockView).displayMessage(contains("Sorting"));
 
-        // Verify view was updated with sorted results
         verify(mockView).displayInfluencers(anyList());
     }
 
@@ -2030,35 +1748,27 @@ public class MainControllerTest {
     private void testInfluencerListCase9_AddToFavorites(Method method) throws Exception {
         initTestEnvironment();
 
-        // Set up mock behavior
         when(mockView.promptForInput(contains("ID"))).thenReturn("1"); // Select first influencer
 
-        // Get UserFavorites to verify
         UserFavorites userFavoritesMock;
         Field userFavoritesField = MainController.class.getDeclaredField("userFavorites");
         userFavoritesField.setAccessible(true);
         userFavoritesMock = (UserFavorites) userFavoritesField.get(controller);
         reset(userFavoritesMock);
 
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with option "9"
         method.invoke(controller, "9", params);
 
-        // Verify proper methods were called
         verify(mockView).promptForInput(contains("ID"));
         verify(userFavoritesMock).addItem(testInfluencers.get(0));
         verify(mockView).showInfluencerListView();
 
-        // Test invalid ID
         reset(mockView);
         when(mockView.promptForInput(contains("ID"))).thenReturn("999"); // Invalid ID
 
-        // Call the method with option "9" again
         method.invoke(controller, "9", params);
 
-        // Verify error was shown
         verify(mockView).showError(contains("Invalid"));
     }
 
@@ -2066,13 +1776,10 @@ public class MainControllerTest {
     private void testInfluencerListCase10to12(Method method, int option) throws Exception {
         initTestEnvironment();
 
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with specified option
         method.invoke(controller, String.valueOf(option), params);
 
-        // Verify proper view method was called
         switch (option) {
             case 10:
                 verify(mockView).showExportView();
@@ -2088,10 +1795,8 @@ public class MainControllerTest {
 
     // Test case 13: Reset working set
     private void testInfluencerListCase13_ResetWorkingSet(Method method) throws Exception {
-        // Create a fresh environment with clean mocks
         reset(mockView, mockRepository);
 
-        // Set up currentWorkingSet with a modified list to ensure reset is needed
         List<Influencer> reducedList = new ArrayList<>();
         reducedList.add(testInfluencers.get(0));
         try {
@@ -2102,29 +1807,21 @@ public class MainControllerTest {
             fail("Failed to set working set: " + e.getMessage());
         }
 
-        // Set up repository behavior
         when(mockRepository.findAll()).thenReturn(testInfluencers);
 
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with option "13"
         method.invoke(controller, "13", params);
 
-        // Verify message was displayed
         verify(mockView).displayMessage(contains("Resetting"));
 
-        // Verify view was refreshed
         verify(mockView).showInfluencerListView();
 
-        // Don't verify exact call count since the method might make multiple calls to findAll()
-        // Instead, verify the working set was updated correctly
         try {
             Field workingSetField = MainController.class.getDeclaredField("currentWorkingSet");
             workingSetField.setAccessible(true);
             List<Influencer> currentWorkingSet = (List<Influencer>) workingSetField.get(controller);
 
-            // Verify the working set was reset to the full list
             assertEquals(testInfluencers.size(), currentWorkingSet.size());
         } catch (Exception e) {
             fail("Failed to verify working set: " + e.getMessage());
@@ -2135,13 +1832,10 @@ public class MainControllerTest {
     private void testInfluencerListInvalidInput(Method method) throws Exception {
         initTestEnvironment();
 
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with non-numeric input
         method.invoke(controller, "not_a_number", params);
 
-        // Verify view was refreshed
         verify(mockView).showInfluencerListView();
     }
 
@@ -2149,13 +1843,10 @@ public class MainControllerTest {
     private void testInfluencerListDefaultCase(Method method) throws Exception {
         initTestEnvironment();
 
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with an option number not in the switch
         method.invoke(controller, "999", params);
 
-        // Verify view was refreshed
         verify(mockView).showInfluencerListView();
     }
 
@@ -2166,7 +1857,6 @@ public class MainControllerTest {
                 "handleFavoritesState", String.class, Map.class);
         handleFavoritesStateMethod.setAccessible(true);
 
-        // Test each case individually
         testFavoritesCase1_SearchByName(handleFavoritesStateMethod);
         testFavoritesCase2_RemoveFromFavorites(handleFavoritesStateMethod);
         testFavoritesCase3_ExportFavorites(handleFavoritesStateMethod);
@@ -2176,18 +1866,14 @@ public class MainControllerTest {
     }
 
     private void initFavoritesTestEnvironment() {
-        // Reset all mocks
         reset(mockView, mockRepository);
 
-        // Setup favorites list
         List<Influencer> favoritesList = new ArrayList<>();
         favoritesList.add(testInfluencers.get(0)); // John Smith
         favoritesList.add(testInfluencers.get(1)); // Emma Johnson
 
-        // Set up mock view to return favorites
         when(mockView.getCurrentFavorites()).thenReturn(favoritesList);
 
-        // Set up UserFavorites
         try {
             UserFavorites userFavoritesMock;
             Field userFavoritesField = MainController.class.getDeclaredField("userFavorites");
@@ -2204,16 +1890,12 @@ public class MainControllerTest {
     private void testFavoritesCase1_SearchByName(Method method) throws Exception {
         initFavoritesTestEnvironment();
 
-        // Set up mock behavior
         when(mockView.promptForInput(contains("name"))).thenReturn("John");
 
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with option "1"
         method.invoke(controller, "1", params);
 
-        // Verify proper methods were called
         verify(mockView).promptForInput(contains("name"));
         verify(mockView).showUserFavoritesView();
     }
@@ -2222,7 +1904,6 @@ public class MainControllerTest {
     private void testFavoritesCase2_RemoveFromFavorites(Method method) throws Exception {
         initFavoritesTestEnvironment();
 
-        // Set up mock behavior
         when(mockView.promptForInput(contains("ID"))).thenReturn("1"); // Select first favorite
 
         // Get UserFavorites to verify
@@ -2231,25 +1912,19 @@ public class MainControllerTest {
         userFavoritesField.setAccessible(true);
         userFavoritesMock = (UserFavorites) userFavoritesField.get(controller);
 
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with option "2"
         method.invoke(controller, "2", params);
 
-        // Verify proper methods were called
         verify(mockView).promptForInput(contains("ID"));
         verify(userFavoritesMock).removeItem(any(Influencer.class));
         verify(mockView).showUserFavoritesView();
 
-        // Test invalid ID
         reset(mockView);
         when(mockView.promptForInput(contains("ID"))).thenReturn("999"); // Invalid ID
 
-        // Call the method with option "2" again
         method.invoke(controller, "2", params);
 
-        // Verify error was shown
         verify(mockView).showError(contains("Invalid"));
     }
 
@@ -2257,14 +1932,10 @@ public class MainControllerTest {
     private void testFavoritesCase3_ExportFavorites(Method method) throws Exception {
         initFavoritesTestEnvironment();
 
-        // In this case we need to test that the method calls showExportView
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with option "3"
         method.invoke(controller, "3", params);
 
-        // Since exportFavorites is private, we can verify the view state change
         verify(mockView).showExportView();
     }
 
@@ -2272,13 +1943,10 @@ public class MainControllerTest {
     private void testFavoritesCase4_BackToUserProfile(Method method) throws Exception {
         initFavoritesTestEnvironment();
 
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with option "4"
         method.invoke(controller, "4", params);
 
-        // Verify user view was shown
         verify(mockView).showUserView();
     }
 
@@ -2286,13 +1954,10 @@ public class MainControllerTest {
     private void testFavoritesInvalidInput(Method method) throws Exception {
         initFavoritesTestEnvironment();
 
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with non-numeric input
         method.invoke(controller, "not_a_number", params);
 
-        // Verify view was refreshed
         verify(mockView).showUserFavoritesView();
     }
 
@@ -2300,13 +1965,10 @@ public class MainControllerTest {
     private void testFavoritesDefaultCase(Method method) throws Exception {
         initFavoritesTestEnvironment();
 
-        // Prepare parameters
         Map<String, Object> params = new HashMap<>();
 
-        // Call the method with an option number not in the switch
         method.invoke(controller, "999", params);
 
-        // Verify view was refreshed
         verify(mockView).showUserFavoritesView();
     }
 } 
