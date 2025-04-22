@@ -22,7 +22,8 @@ Qianfu Peng [Cora1231](https://github.com/Cora1231)
 ## Design Documents and Manuals
 
 - Design Document: [Final UML Design](DesignDocuments/FinalUMLDesign.md)
-- User Manual:
+
+- User Manual: [User Manual](Manual/README.md)
 
 ---
 
